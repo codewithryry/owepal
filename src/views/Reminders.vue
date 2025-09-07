@@ -1,10 +1,8 @@
 <template>
   <div class="container py-5">
-    <h2 class="mb-4 fw-bold">Reminders</h2>
-
     <!-- No Reminders -->
     <div v-if="!reminders.length" class="glass-card alert alert-success text-center py-5">
-      🎉 You’re all caught up! No upcoming or overdue debts.
+      You’re all caught up! No upcoming or overdue debts.
     </div>
 
     <!-- Reminder List -->

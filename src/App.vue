@@ -227,7 +227,6 @@ const handleSignOut = async () => {
     'Helvetica Neue', sans-serif;
 }
 
-/* Modern Header */
 .app-header {
   display: flex;
   justify-content: space-between;
@@ -236,7 +235,6 @@ const handleSignOut = async () => {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Brand */
 .brand-link {
   text-decoration: none;
   color: inherit;
@@ -255,14 +253,12 @@ const handleSignOut = async () => {
   opacity: 0.9;
 }
 
-/* Header Actions */
 .header-actions {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-/* User Menu */
 .user-menu {
   position: relative;
 }
@@ -287,7 +283,7 @@ const handleSignOut = async () => {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -301,15 +297,14 @@ const handleSignOut = async () => {
   right: 0;
   margin-top: 0.5rem;
   width: 280px;
-  background-color: rgb(146, 141, 141);
-  border-radius: 0.5rem;
+  background-color: rgba(200, 200, 200, 0.9);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   z-index: 10000;
   overflow: hidden;
   color: #212529;
 }
 [data-bs-theme='dark'] .user-dropdown {
-  background-color: #2c3034;
+  background-color: rgba(50, 50, 50, 0.85);
   color: #f8f9fa;
 }
 
@@ -361,15 +356,12 @@ const handleSignOut = async () => {
   color: #e6858f;
 }
 
-/* Bottom Nav */
 .bottom-nav {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background-color: white;
-  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.95);
   border-top: 1px solid #dee2e6;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
   position: fixed;
   bottom: 0;
   left: 0;
@@ -377,7 +369,7 @@ const handleSignOut = async () => {
   z-index: 1000;
 }
 [data-bs-theme='dark'] .bottom-nav {
-  background-color: #212529;
+  background-color: rgba(33, 33, 33, 0.95);
   border-top-color: #495057;
 }
 
@@ -424,27 +416,25 @@ const handleSignOut = async () => {
   box-shadow: 0 4px 10px rgba(var(--bs-primary-rgb), 0.3);
 }
 
-/* Main Content */
 .main-content {
   flex: 1;
   padding: 1rem;
-  padding-bottom: calc(1rem + 76px); /* space for bottom nav */
+  padding-bottom: calc(1rem + 76px);
 }
 
-/* Frosted Glass */
+/* Glass effect with less transparency */
 .glass {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   color: inherit;
 }
 [data-bs-theme='dark'] .glass {
-  background: rgba(32, 32, 32, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(40, 40, 40, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: #fff;
 }
 </style>

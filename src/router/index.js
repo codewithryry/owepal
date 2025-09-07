@@ -12,13 +12,17 @@ import Add from '../views/Add.vue'
 import Reminders from '../views/Reminders.vue'
 
 const routes = [
-  { path: '/', component: Home, meta: { requiresAuth: true } },
-  { path: '/login', component: Login, meta: { requiresAuth: false } },
-  { path: '/debug', component: Debug, meta: { requiresAuth: true } },
-  { path: '/analytics', component: DebtAnalytics, meta: { requiresAuth: true } },
-  { path: '/debts', component: DebtTracker, meta: { requiresAuth: true } },
-  { path: '/add', component: Add, meta: { requiresAuth: true } },
-  { path: '/reminders', component: Reminders, meta: { requiresAuth: true } },
+  { path: '/', component: Home, meta: { requiresAuth: true, name: 'Home' } },
+  { path: '/login', component: Login, meta: { requiresAuth: false, name: 'Login' } },
+  { path: '/debug', component: Debug, meta: { requiresAuth: true, name: 'Debug' } },
+  {
+    path: '/analytics',
+    component: DebtAnalytics,
+    meta: { requiresAuth: true, name: 'Debt Analytics' },
+  },
+  { path: '/debts', component: DebtTracker, meta: { requiresAuth: true, name: 'Debt Tracker' } },
+  { path: '/add', component: Add, meta: { requiresAuth: true, name: 'Add Debt' } },
+  { path: '/reminders', component: Reminders, meta: { requiresAuth: true, name: 'Reminders' } },
 ]
 
 const router = createRouter({
@@ -46,7 +50,7 @@ function getCurrentUser() {
 
 // Navigation guard
 router.beforeEach(async (to, from, next) => {
-  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const user = await getCurrentUser()
 
   if (requiresAuth && !user) {
@@ -54,6 +58,8 @@ router.beforeEach(async (to, from, next) => {
   } else if (to.path === '/login' && user) {
     next('/')
   } else {
+    // Dynamically set the page title
+    document.title = to.meta.name ? `${to.meta.name} | eDEBTZero` : 'eDEBTZero'
     next()
   }
 })

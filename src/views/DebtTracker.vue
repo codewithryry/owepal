@@ -1,3 +1,4 @@
+```vue
 <template>
   <div v-if="user" class="debtlist-container px-4 py-4">
     <!-- Search / Filters -->
@@ -10,7 +11,7 @@
           placeholder="Search by name or item..."
         />
       </div>
-      <div class="col-md-6 d-flex gap-2 justify-content-md-end">
+      <div class="col-md-6 d-flex gap-2 justify-content-md-end flex-wrap">
         <select v-model="statusFilter" class="form-select glass-input" style="width: auto">
           <option value="all">All Status</option>
           <option value="paid">Paid</option>
@@ -20,26 +21,19 @@
           <option value="all">All Types</option>
           <option value="Sangla">Sangla</option>
           <option value="Gloan">Gloan</option>
-          <option value="Gredit">Gredit</option>
+          <option value="Gredit">Gcredit</option>
           <option value="Splaylater">Splaylater</option>
         </select>
       </div>
     </div>
 
-    <!-- Due Soon Alert -->
-    <div v-if="dueSoonDebts.length" class="alert alert-warning glass-card">
-      <h6 class="fw-bold mb-2">Renewal Due Soon</h6>
-      <ul class="mb-0">
-        <li v-for="debt in dueSoonDebts" :key="debt.id">
-          <strong>{{ debt.debtSource }}</strong> - {{ formatDate(debt.renewalDate) }}
-        </li>
-      </ul>
-    </div>
-
     <!-- Total Debt -->
     <div class="card mb-4 glass-card shadow-sm border-0">
       <div class="card-body">
-        <h5 class="fw-bold mb-0">Total Debt: ₱{{ totalDebt.toLocaleString() }}</h5>
+        <h5 class="fw-bold mb-2">Total Debt: ₱{{ totalDebt.toLocaleString() }}</h5>
+        <div v-if="totalSanglaLoanAmount > 0" class="text-muted small">
+          Total Sangla Loan Amount: ₱{{ totalSanglaLoanAmount.toLocaleString() }}
+        </div>
       </div>
     </div>
 
@@ -49,23 +43,37 @@
         v-for="debt in filteredDebts"
         :key="debt.id"
         class="list-group-item glass-item d-flex justify-content-between align-items-center mb-2"
-        :class="{ 'border-warning': isDueSoon(debt.renewalDate) }"
+        :class="{ 'border-warning': isDueSoon(debt.renewalDate, debt.dueDate, debt.loanType) }"
       >
         <div>
           <h6 class="mb-1">
             {{ debt.debtSource }} <small class="text-muted">({{ debt.loanType }})</small>
           </h6>
           <div v-if="debt.item" class="text-muted small">Item: {{ debt.item }}</div>
-          <div v-if="debt.renewalDate" class="text-muted small">
-            Renewal: {{ formatDate(debt.renewalDate) }}
+          <div v-if="debt.loanType === 'Sangla' && debt.loanAmount" class="text-muted small">
+            Loan Amount: ₱{{ debt.loanAmount.toLocaleString() }}
+          </div>
+          <div class="text-muted small">
+            <strong>Amount:</strong> ₱{{ debt.amount.toLocaleString() }}
+          </div>
+          <div v-if="debt.renewalDate && debt.loanType === 'Sangla'" class="text-muted small">
+            <strong>Renewal:</strong> {{ formatDate(debt.renewalDate) }}
+          </div>
+          <div
+            v-if="['Splaylater', 'Gloan', 'Gredit'].includes(debt.loanType) && debt.dueDate"
+            class="text-muted small"
+          >
+            <strong>Due Date:</strong> {{ formatDate(debt.dueDate) }}
           </div>
           <div class="mt-1">
-            Status:
+            <strong>Status:</strong>
             <span :class="debt.isPaid ? 'text-success' : 'text-danger'">{{
               debt.isPaid ? 'Paid' : 'Unpaid'
             }}</span>
           </div>
         </div>
+
+        <!-- Action Buttons -->
         <div class="d-flex gap-2">
           <button
             @click="togglePaidStatus(debt.id, debt.isPaid)"
@@ -105,7 +113,6 @@ import {
 import { db } from '../firebase/config'
 
 const user = inject('user')
-
 const debts = ref([])
 const searchQuery = ref('')
 const statusFilter = ref('all')
@@ -145,20 +152,34 @@ const filteredDebts = computed(() =>
 )
 
 // Due soon
-const isDueSoon = (dateStr) => {
-  if (!dateStr) return false
+const isDueSoon = (renewalDate, dueDate, loanType) => {
   const today = new Date()
-  const renewal = new Date(dateStr)
-  const diffDays = Math.ceil((renewal - today) / (1000 * 60 * 60 * 24))
+  let targetDate = null
+
+  if (loanType === 'Sangla' && renewalDate) {
+    targetDate = new Date(renewalDate)
+  } else if (['Splaylater', 'Gloan', 'Gredit'].includes(loanType) && dueDate) {
+    targetDate = new Date(dueDate)
+  }
+
+  if (!targetDate) return false
+
+  const diffDays = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24))
   return diffDays <= 7 && diffDays >= 0
 }
 
 const dueSoonDebts = computed(() =>
-  debts.value.filter((d) => d.renewalDate && !d.isPaid && isDueSoon(d.renewalDate)),
+  debts.value.filter((d) => !d.isPaid && isDueSoon(d.renewalDate, d.dueDate, d.loanType)),
 )
 
 // Totals
-const totalDebt = computed(() => debts.value.reduce((sum, d) => sum + d.amount, 0))
+const totalDebt = computed(() => debts.value.reduce((sum, d) => sum + (d.amount || 0), 0))
+const totalSanglaLoanAmount = computed(() =>
+  debts.value.reduce(
+    (sum, d) => sum + (d.loanType === 'Sangla' && d.loanAmount ? d.loanAmount : 0),
+    0,
+  ),
+)
 
 // Actions
 const togglePaidStatus = async (id, currentStatus) => {
@@ -182,7 +203,6 @@ const formatDate = (date) =>
   padding-bottom: 3rem;
 }
 
-/* Glass effect for cards and inputs */
 .glass-card,
 .glass-input,
 .glass-item {
@@ -200,7 +220,6 @@ const formatDate = (date) =>
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* Input styling */
 .glass-input {
   border: none;
   outline: none;
@@ -218,3 +237,4 @@ const formatDate = (date) =>
   border-left: 5px solid #ffc107 !important;
 }
 </style>
+```

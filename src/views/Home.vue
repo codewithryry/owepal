@@ -4,11 +4,6 @@
     class="dashboard-container min-vh-100 px-4 py-4"
     :class="darkMode ? 'dark-mode' : ''"
   >
-    <!-- Header -->
-    <header class="d-flex justify-content-between align-items-center mb-5">
-      <h5 class="text-muted m-0">Your financial overview for {{ currentDate }}</h5>
-    </header>
-
     <!-- Summary Cards -->
     <div class="row g-4 mb-5">
       <div v-for="card in summaryCards" :key="card.title" class="col-xl-3 col-md-6">
@@ -50,7 +45,7 @@
         <div class="card glass-card shadow-sm h-100 border-0">
           <div class="card-header d-flex justify-content-between align-items-center pt-4 border-0">
             <h5 class="fw-bold mb-0">Due Soon</h5>
-            <span class="badge bg-warning text-dark">{{ dueSoonDebts.length }}</span>
+            <!-- <span class="badge bg-warning text-dark">{{ dueSoonDebts.length }}</span> -->
           </div>
           <div class="card-body p-0">
             <div v-if="dueSoonDebts.length" class="list-group list-group-flush">
@@ -61,7 +56,13 @@
               >
                 <div>
                   <h6 class="mb-1">{{ debt.debtSource }}</h6>
-                  <small class="text-muted">Due: {{ formatDate(debt.renewalDate) }}</small>
+                  <small class="text-muted">
+                    Due: {{ formatDate(debt.renewalDate) }} <br />
+                    Amount: ₱{{ debt.amount.toLocaleString() }}
+                    <span v-if="debt.loanType === 'Sangla' && debt.loanAmount">
+                      <br />Loan Amount: ₱{{ debt.loanAmount.toLocaleString() }}
+                    </span>
+                  </small>
                 </div>
                 <span class="badge bg-light text-dark fs-6"
                   >₱{{ debt.amount.toLocaleString() }}</span
@@ -162,7 +163,7 @@ const updateChart = () => {
   chartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: debts.value.map((d) => d.debtSource),
+      //   labels: debts.value.map((d) => d.debtSource),
       datasets: [
         {
           data: debts.value.map((d) => d.amount),

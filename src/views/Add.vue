@@ -29,6 +29,20 @@
           />
         </div>
 
+        <!-- Loan Amount for Sangla -->
+        <div v-if="loanType === 'Sangla'" class="mb-3">
+          <label for="loanAmount" class="form-label">Loan Amount (₱)</label>
+          <input
+            v-model.number="loanAmount"
+            type="number"
+            class="form-control glass-input"
+            id="loanAmount"
+            placeholder="0"
+            required
+            min="0"
+          />
+        </div>
+
         <!-- Amount -->
         <div class="mb-3">
           <label for="amount" class="form-label">Amount (₱)</label>
@@ -46,13 +60,25 @@
         <!-- Renewal Date for Sangla -->
         <div v-if="loanType === 'Sangla'" class="mb-3">
           <label for="renewalDate" class="form-label">Renewal Date</label>
-          <input v-model="renewalDate" type="date" class="form-control glass-input" id="renewalDate" required />
+          <input
+            v-model="renewalDate"
+            type="date"
+            class="form-control glass-input"
+            id="renewalDate"
+            required
+          />
         </div>
 
-        <!-- Due Date for Splaylater -->
-        <div v-if="loanType === 'Splaylater'" class="mb-3">
+        <!-- Due Date for Splaylater, Gloan, and Gcredit -->
+        <div v-if="['Splaylater', 'Gloan', 'Gcredit'].includes(loanType)" class="mb-3">
           <label for="dueDate" class="form-label">Due Date</label>
-          <input v-model="dueDate" type="date" class="form-control glass-input" id="dueDate" required />
+          <input
+            v-model="dueDate"
+            type="date"
+            class="form-control glass-input"
+            id="dueDate"
+            required
+          />
         </div>
 
         <!-- Loan Type -->
@@ -62,7 +88,7 @@
             <option value="" disabled>Select Loan Type</option>
             <option value="Sangla">Sangla (Pawn)</option>
             <option value="Gloan">Gloan</option>
-            <option value="Gredit">Gredit</option>
+            <option value="Gcredit">Gcredit</option>
             <option value="Splaylater">Splaylater (Installment)</option>
           </select>
         </div>
@@ -132,6 +158,7 @@ const user = inject('user')
 // Reactive fields
 const debtSource = ref('')
 const item = ref('')
+const loanAmount = ref(0) // Sangla loan amount
 const amount = ref(0)
 const renewalDate = ref('')
 const dueDate = ref('')
@@ -164,12 +191,19 @@ const addDebt = async () => {
     return
   }
 
+  // Form validation
+  const form = document.querySelector('.needs-validation')
+  if (!form.checkValidity()) {
+    form.classList.add('was-validated')
+    return
+  }
+
   try {
     let pictureUrl = ''
     if (transactionPicture.value) {
       const pictureRef = storageRef(
         storage,
-        `transaction-pictures/${user.value.uid}/${Date.now()}_${transactionPicture.value.name}`
+        `transaction-pictures/${user.value.uid}/${Date.now()}_${transactionPicture.value.name}`,
       )
       const snapshot = await uploadBytes(pictureRef, transactionPicture.value)
       pictureUrl = await getDownloadURL(snapshot.ref)
@@ -178,9 +212,10 @@ const addDebt = async () => {
     await addDoc(collection(db, 'debts'), {
       debtSource: debtSource.value,
       item: loanType.value === 'Sangla' ? item.value : '',
+      loanAmount: loanType.value === 'Sangla' ? parseFloat(loanAmount.value) : null,
       amount: parseFloat(amount.value),
       renewalDate: loanType.value === 'Sangla' ? renewalDate.value : '',
-      dueDate: loanType.value === 'Splaylater' ? dueDate.value : '',
+      dueDate: ['Splaylater', 'Gloan', 'Gcredit'].includes(loanType.value) ? dueDate.value : '',
       loanType: loanType.value,
       isPaid: isPaid.value,
       transactionPicture: pictureUrl,
@@ -196,12 +231,14 @@ const addDebt = async () => {
     // Reset form
     debtSource.value = ''
     item.value = ''
+    loanAmount.value = 0
     amount.value = 0
     renewalDate.value = ''
     dueDate.value = ''
     loanType.value = ''
     isPaid.value = false
     transactionPicture.value = null
+    form.classList.remove('was-validated')
   } catch (error) {
     modalMessage.value = error.message
     modalTitle.value = 'Error'

@@ -1,6 +1,7 @@
 <template>
   <div class="container py-5">
-    <h2 class="mb-4">Debug Information</h2>
+    <h2 class="mb-4">Debug Information (v1.2)</h2>
+    <p class="text-muted mb-4">Developed by: Codewithryry</p>
 
     <div class="row gy-4">
       <!-- User Info -->
@@ -42,9 +43,7 @@
                 <td>{{ d.debtSource }}</td>
                 <td>₱{{ formatNumber(d.amount) }}</td>
                 <td>{{ d.loanType }}</td>
-                <td class="small">
-                  {{ d.userId ? d.userId.slice(0, 8) + '...' : 'MISSING' }}
-                </td>
+                <td class="small">{{ d.userId ? d.userId.slice(0, 8) + '...' : 'MISSING' }}</td>
                 <td>{{ d.isPaid ? 'Yes' : 'No' }}</td>
                 <td class="small">{{ formatDateSafe(d.createdAt) }}</td>
               </tr>
@@ -75,9 +74,7 @@
                 <td class="small">{{ formatDateSafe(log.timestamp) }}</td>
                 <td>{{ log.action }}</td>
                 <td class="small">{{ log.details }}</td>
-                <td class="small">
-                  {{ log.userId ? log.userId.slice(0, 8) + '...' : 'N/A' }}
-                </td>
+                <td class="small">{{ log.userId ? log.userId.slice(0, 8) + '...' : 'N/A' }}</td>
               </tr>
               <tr v-if="!auditLogs.length">
                 <td colspan="4" class="text-center small text-muted">No logs recorded</td>
@@ -110,39 +107,35 @@ let logsUnsub = null
 // ---------------- helpers ----------------
 const pretty = (obj) => JSON.stringify(obj, null, 2)
 const formatNumber = (n) => (typeof n === 'number' ? n.toLocaleString() : n)
-
 const formatDateSafe = (v) => {
   if (!v) return 'N/A'
   try {
-    if (typeof v.toDate === 'function') {
+    if (v?.toDate)
       return v
         .toDate()
         .toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-    }
-    if (typeof v === 'string') {
-      const d = new Date(v)
-      if (!isNaN(d)) {
-        return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-      }
-    }
-    if (v instanceof Date) {
-      return v.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-    }
+    if (typeof v === 'string' || v instanceof Date)
+      return new Date(v).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
   } catch {}
   return String(v)
 }
 
-const userDebug = computed(() => {
-  if (!user.value) return null
-  return {
-    uid: user.value.uid,
-    displayName: user.value.displayName || null,
-    email: user.value.email || null,
-    photoURL: user.value.photoURL || null,
-  }
-})
+// ---------------- computed ----------------
+const userDebug = computed(() =>
+  user.value
+    ? {
+        uid: user.value.uid,
+        displayName: user.value.displayName || null,
+        email: user.value.email || null,
+        photoURL: user.value.photoURL || null,
+      }
+    : null,
+)
 
-// Placeholder for form debug (if needed in global state)
 const formDebug = computed(() => ({
   debtSource: '',
   item: '',
@@ -155,28 +148,28 @@ const formDebug = computed(() => ({
 
 // ---------------- Firestore listeners ----------------
 const loadUserDebts = (userId) => {
-  if (typeof debtsUnsub === 'function') debtsUnsub()
+  if (debtsUnsub) debtsUnsub()
   debtsLoading.value = true
-  const debtsQuery = query(
+  const q = query(
     collection(db, 'debts'),
     firestoreWhere('userId', '==', userId),
     orderBy('createdAt', 'desc'),
   )
-  debtsUnsub = onSnapshot(debtsQuery, (snapshot) => {
+  debtsUnsub = onSnapshot(q, (snapshot) => {
     debts.value = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }))
     debtsLoading.value = false
   })
 }
 
 const loadAuditLogs = (userId) => {
-  if (typeof logsUnsub === 'function') logsUnsub()
+  if (logsUnsub) logsUnsub()
   auditLogsLoading.value = true
-  const logsQuery = query(
+  const q = query(
     collection(db, 'auditLogs'),
     firestoreWhere('userId', '==', userId),
     orderBy('timestamp', 'desc'),
   )
-  logsUnsub = onSnapshot(logsQuery, (snapshot) => {
+  logsUnsub = onSnapshot(q, (snapshot) => {
     auditLogs.value = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }))
     auditLogsLoading.value = false
   })
@@ -198,9 +191,8 @@ onMounted(() => {
 
   onUnmounted(() => {
     unsubAuth()
-    if (typeof debtsUnsub === 'function') debtsUnsub()
-    if (typeof logsUnsub === 'function') logsUnsub()
+    if (debtsUnsub) debtsUnsub()
+    if (logsUnsub) logsUnsub()
   })
 })
 </script>
-

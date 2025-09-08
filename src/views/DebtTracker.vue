@@ -1,23 +1,44 @@
 ```vue
 <template>
-  <div v-if="user" class="debtlist-container px-4 py-4">
+  <div v-if="user" class="debtlist-container px-6 py-8">
     <!-- Search / Filters -->
-    <div class="row mb-4 align-items-center">
-      <div class="col-md-6 mb-2 mb-md-0">
-        <input
-          v-model="searchQuery"
-          type="text"
-          class="form-control glass-input"
-          placeholder="Search by name or item..."
-        />
+    <div class="flex flex-col md:flex-row gap-4 mb-6 items-center">
+      <div class="w-full md:w-1/2">
+        <div class="relative">
+          <input
+            v-model="searchQuery"
+            type="text"
+            class="w-full glass-input pl-10 pr-4 py-2 rounded-full text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-indigo-400"
+            placeholder="Search by name or item..."
+          />
+          <svg
+            class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
       </div>
-      <div class="col-md-6 d-flex gap-2 justify-content-md-end flex-wrap">
-        <select v-model="statusFilter" class="form-select glass-input" style="width: auto">
+      <div class="w-full md:w-1/2 flex gap-4 justify-end">
+        <select
+          v-model="statusFilter"
+          class="glass-input rounded-full px-4 py-2 text-gray-800 focus:ring-2 focus:ring-indigo-400"
+        >
           <option value="all">All Status</option>
           <option value="paid">Paid</option>
           <option value="unpaid">Unpaid</option>
         </select>
-        <select v-model="typeFilter" class="form-select glass-input" style="width: auto">
+        <select
+          v-model="typeFilter"
+          class="glass-input rounded-full px-4 py-2 text-gray-800 focus:ring-2 focus:ring-indigo-400"
+        >
           <option value="all">All Types</option>
           <option value="Sangla">Sangla</option>
           <option value="Gloan">Gloan</option>
@@ -27,74 +48,84 @@
       </div>
     </div>
 
-    <!-- Total Debt -->
-    <div class="card mb-4 glass-card shadow-sm border-0">
-      <div class="card-body">
-        <h5 class="fw-bold mb-2">Total Debt: ₱{{ totalDebt.toLocaleString() }}</h5>
-        <div v-if="totalSanglaLoanAmount > 0" class="text-muted small">
-          Total Sangla Loan Amount: ₱{{ totalSanglaLoanAmount.toLocaleString() }}
-        </div>
-      </div>
-    </div>
-
     <!-- Debt List -->
-    <ul class="list-group">
-      <li
+    <div class="space-y-4">
+      <div
         v-for="debt in filteredDebts"
         :key="debt.id"
-        class="list-group-item glass-item d-flex justify-content-between align-items-center mb-2"
-        :class="{ 'border-warning': isDueSoon(debt.renewalDate, debt.dueDate, debt.loanType) }"
+        class="glass-item p-4 rounded-xl flex justify-between items-center transition-all duration-300"
+        :class="{
+          'border-l-4 border-yellow-400': isDueSoon(debt.renewalDate, debt.dueDate, debt.loanType),
+        }"
       >
-        <div>
-          <h6 class="mb-1">
-            {{ debt.debtSource }} <small class="text-muted">({{ debt.loanType }})</small>
+        <div class="space-y-1">
+          <h6 class="text-lg font-semibold text-gray-900">
+            {{ debt.debtSource }}
+            <span class="text-sm text-gray-500">({{ debt.loanType }})</span>
           </h6>
-          <div v-if="debt.item" class="text-muted small">Item: {{ debt.item }}</div>
-          <div v-if="debt.loanType === 'Sangla' && debt.loanAmount" class="text-muted small">
+          <div v-if="debt.item" class="text-sm text-gray-600">Item: {{ debt.item }}</div>
+          <div v-if="debt.loanType === 'Sangla' && debt.loanAmount" class="text-sm text-gray-600">
             Loan Amount: ₱{{ debt.loanAmount.toLocaleString() }}
           </div>
-          <div class="text-muted small">
+          <div class="text-sm text-gray-600">
             <strong>Amount:</strong> ₱{{ debt.amount.toLocaleString() }}
           </div>
-          <div v-if="debt.renewalDate && debt.loanType === 'Sangla'" class="text-muted small">
+          <div v-if="debt.renewalDate && debt.loanType === 'Sangla'" class="text-sm text-gray-600">
             <strong>Renewal:</strong> {{ formatDate(debt.renewalDate) }}
           </div>
           <div
             v-if="['Splaylater', 'Gloan', 'Gredit'].includes(debt.loanType) && debt.dueDate"
-            class="text-muted small"
+            class="text-sm text-gray-600"
           >
             <strong>Due Date:</strong> {{ formatDate(debt.dueDate) }}
           </div>
-          <div class="mt-1">
+          <div class="mt-2">
             <strong>Status:</strong>
-            <span :class="debt.isPaid ? 'text-success' : 'text-danger'">{{
-              debt.isPaid ? 'Paid' : 'Unpaid'
-            }}</span>
+            <span
+              class="inline-block px-2 py-1 rounded-full text-xs font-medium"
+              :class="debt.isPaid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
+            >
+              {{ debt.isPaid ? 'Paid' : 'Unpaid' }}
+            </span>
           </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="d-flex gap-2">
+        <div class="flex gap-2">
           <button
             @click="togglePaidStatus(debt.id, debt.isPaid)"
-            class="btn btn-sm btn-outline-success"
+            class="btn glass-btn bg-green-100 text-green-700 hover:bg-green-200 rounded-full p-2"
             title="Toggle Paid"
           >
-            ✔
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
           </button>
           <button
             @click="confirmDelete(debt.id, debt.debtSource)"
-            class="btn btn-sm btn-outline-danger"
+            class="btn glass-btn bg-red-100 text-red-700 hover:bg-red-200 rounded-full p-2"
             title="Delete"
           >
-            🗑
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           </button>
         </div>
-      </li>
-      <li v-if="!filteredDebts.length" class="list-group-item text-center text-muted glass-item">
+      </div>
+      <div v-if="!filteredDebts.length" class="glass-item p-4 rounded-xl text-center text-gray-500">
         No debts recorded yet.
-      </li>
-    </ul>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -200,41 +231,30 @@ const formatDate = (date) =>
 <style scoped>
 .debtlist-container {
   min-height: 100vh;
-  padding-bottom: 3rem;
+  padding-bottom: 4rem;
 }
 
-.glass-card,
 .glass-input,
 .glass-item {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
 }
 
-.glass-card:hover,
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  outline: none;
+}
+
 .glass-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-.glass-input {
-  border: none;
-  outline: none;
-  padding: 0.5rem 1rem;
-  box-shadow: none;
-}
-
-.list-group-item {
-  border: none;
-  background: transparent;
-  transition: all 0.2s;
-}
-
-.border-warning {
-  border-left: 5px solid #ffc107 !important;
+.glass-btn:hover {
+  transform: scale(1.05);
 }
 </style>
 ```

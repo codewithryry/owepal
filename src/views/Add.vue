@@ -99,18 +99,6 @@
           <label class="form-check-label" for="isPaid">Mark as Paid</label>
         </div>
 
-        <!-- Transaction Picture -->
-        <div class="mb-3">
-          <label for="transactionPicture" class="form-label">Transaction Picture (Optional)</label>
-          <input
-            type="file"
-            accept="image/*"
-            @change="handleFileUpload"
-            class="form-control glass-input"
-            id="transactionPicture"
-          />
-        </div>
-
         <button type="submit" class="btn btn-primary w-100">Add Debt</button>
       </form>
     </div>

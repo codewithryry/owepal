@@ -1,13 +1,26 @@
+```vue
 <template>
   <div
     v-if="user"
-    class="dashboard-container min-vh-100 px-4 py-4"
-    :class="darkMode ? 'dark-mode' : ''"
+    class="dashboard-container min-vh-100 py-5 px-3"
+    :class="darkMode ? 'dark-mode' : 'light-mode'"
   >
-    <!-- Summary Cards -->
-    <div class="row g-4 mb-5">
-      <div v-for="card in summaryCards" :key="card.title" class="col-xl-3 col-md-6">
-        <div class="card glass-card h-100 shadow-sm border-0">
+    <!-- Header with Total Debt (Unchanged) -->
+    <div class="header-section text-center mb-5 rounded-box">
+      <h1 class="fw-bold display-4 animate__animated animate__fadeIn">
+        ₱{{ totalDebt.toLocaleString() }}
+      </h1>
+      <p class="text-muted fs-5">Total Debt Balance</p>
+      <div v-if="totalSanglaLoanAmount > 0" class="text-muted small mt-2">
+        Total Sangla Loan Amount: ₱{{ totalSanglaLoanAmount.toLocaleString() }}
+      </div>
+      <div class="header-underline"></div>
+    </div>
+
+    <!-- Summary Cards (Unchanged) -->
+    <div class="summary-box mb-5">
+      <div v-for="card in summaryCards" :key="card.title" class="summary-card">
+        <div class="card modern-card h-100 rounded-box shadow-sm animate__animated animate__zoomIn">
           <div class="card-body d-flex justify-content-between align-items-center">
             <div>
               <h6 class="card-subtitle mb-2 text-muted">{{ card.title }}</h6>
@@ -24,54 +37,87 @@
       </div>
     </div>
 
-    <!-- Charts and Due Soon Section -->
-    <div class="row g-4">
-      <!-- Debt Distribution Chart -->
-      <div class="col-lg-8">
-        <div class="card glass-card shadow-sm h-100 border-0">
-          <div class="card-header bg-transparent border-0 pt-4">
-            <h5 class="fw-bold">Debt Distribution</h5>
-          </div>
-          <div class="card-body">
-            <div class="chart-container" style="height: 250px">
-              <canvas ref="debtChart"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Due Soon List -->
-      <div class="col-lg-4">
-        <div class="card glass-card shadow-sm h-100 border-0">
-          <div class="card-header d-flex justify-content-between align-items-center pt-4 border-0">
+    <!-- Due Soon Section (Box Container Removed) -->
+    <div class="row g-4 mb-5">
+      <div class="col-12">
+        <div class="animate__animated animate__fadeInUp">
+          <div class="card-header d-flex justify-content-between align-items-center p-4 border-0">
             <h5 class="fw-bold mb-0">Due Soon</h5>
-            <!-- <span class="badge bg-warning text-dark">{{ dueSoonDebts.length }}</span> -->
+            <span class="badge bg-primary text-white">{{ dueSoonDebts.length }}</span>
           </div>
-          <div class="card-body p-0">
-            <div v-if="dueSoonDebts.length" class="list-group list-group-flush">
+          <div class="card-body p-4 d-flex flex-column">
+            <div v-if="dueSoonDebts.length" class="audit-list">
               <div
                 v-for="debt in dueSoonDebts"
                 :key="debt.id"
-                class="list-group-item px-3 py-3 glass-item d-flex justify-content-between align-items-start"
+                class="audit-item d-flex justify-content-between align-items-center mb-3"
               >
-                <div>
-                  <h6 class="mb-1">{{ debt.debtSource }}</h6>
-                  <small class="text-muted">
-                    Due: {{ formatDate(debt.renewalDate) }} <br />
-                    Amount: ₱{{ debt.amount.toLocaleString() }}
-                    <span v-if="debt.loanType === 'Sangla' && debt.loanAmount">
-                      <br />Loan Amount: ₱{{ debt.loanAmount.toLocaleString() }}
-                    </span>
-                  </small>
+                <div class="debt-details d-flex align-items-center">
+                  <div class="timeline-dot"></div>
+                  <div class="debt-content">
+                    <h6 class="fw-semibold mb-1">{{ debt.debtSource }}</h6>
+                    <small class="text-muted">
+                      Due: {{ formatDate(debt.renewalDate) }}<br />
+                      Amount: ₱{{ debt.amount.toLocaleString() }}
+                      <span v-if="debt.loanType === 'Sangla' && debt.loanAmount">
+                        <br />Loan Amount: ₱{{ debt.loanAmount.toLocaleString() }}
+                      </span>
+                    </small>
+                  </div>
                 </div>
-                <span class="badge bg-light text-dark fs-6"
-                  >₱{{ debt.amount.toLocaleString() }}</span
-                >
+                <span class="amount-badge">₱{{ debt.amount.toLocaleString() }}</span>
               </div>
             </div>
             <div v-else class="text-center py-5">
               <i class="bi bi-check-circle text-success fs-1 mb-3"></i>
-              <p class="text-muted">No debts due soon. Good job!</p>
+              <p class="text-muted">No debts due soon. You're on track!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Transactions Section (Box Container Removed, Unchanged) -->
+    <div class="row g-4 mb-5">
+      <div class="col-12">
+        <div class="animate__animated animate__fadeInUp">
+          <div class="card-header d-flex justify-content-between align-items-center p-4 border-0">
+            <h5 class="fw-bold mb-0">Recent Transactions</h5>
+            <span class="badge bg-primary text-white">{{ recentDebts.length }}</span>
+          </div>
+          <div class="card-body p-4 d-flex flex-column">
+            <div v-if="recentDebts.length" class="audit-list">
+              <div
+                v-for="debt in recentDebts"
+                :key="debt.id"
+                class="audit-item d-flex justify-content-between align-items-center mb-3"
+              >
+                <div class="debt-details d-flex align-items-center">
+                  <div class="timeline-dot"></div>
+                  <div class="debt-content">
+                    <h6 class="fw-semibold mb-1">{{ debt.debtSource }}</h6>
+                    <small class="text-muted">
+                      Amount: ₱{{ debt.amount.toLocaleString() }}<br />
+                      Due: {{ formatDate(debt.dueDate) }}<br />
+                      Status:
+                      <span :class="debt.isPaid ? 'text-success' : 'text-warning'">{{
+                        debt.isPaid ? 'Paid' : 'Unpaid'
+                      }}</span>
+                      <span v-if="debt.loanType"><br />Type: {{ debt.loanType }}</span>
+                    </small>
+                  </div>
+                </div>
+                <span class="amount-badge">₱{{ debt.amount.toLocaleString() }}</span>
+              </div>
+            </div>
+            <div v-else class="text-center py-5">
+              <i class="bi bi-file-earmark-text text-primary fs-1 mb-3"></i>
+              <p class="text-muted">No recent activity.</p>
+            </div>
+            <div class="button-container mt-auto">
+              <router-link to="/debts" class="btn btn-outline-primary"
+                >View All Transactions</router-link
+              >
             </div>
           </div>
         </div>
@@ -81,16 +127,13 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, inject } from 'vue'
-import Chart from 'chart.js/auto'
-import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore'
+import { ref, computed, onMounted, inject } from 'vue'
+import { collection, query, where, onSnapshot, orderBy, limit } from 'firebase/firestore'
 import { db } from '../firebase/config'
 
 const user = inject('user')
 const darkMode = inject('darkMode')
 const debts = ref([])
-const debtChart = ref(null)
-let chartInstance = null
 
 // Fetch debts from Firebase
 onMounted(() => {
@@ -106,31 +149,23 @@ onMounted(() => {
   }
 })
 
-// Watch debts to update chart
-watch(
-  debts,
-  () => {
-    if (debts.value.length && debtChart.value) updateChart()
-  },
-  { deep: true },
-)
-
-// Date display
-const currentDate = computed(() =>
-  new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }),
-)
-
 // Calculate totals
 const totalDebt = computed(() => debts.value.reduce((sum, d) => sum + d.amount, 0))
+const totalSanglaLoanAmount = computed(() =>
+  debts.value.reduce(
+    (sum, d) => sum + (d.loanType === 'Sangla' && d.loanAmount ? d.loanAmount : 0),
+    0,
+  ),
+)
 const activeDebts = computed(() => debts.value.filter((d) => !d.isPaid).length)
 const paidDebts = computed(() => debts.value.filter((d) => d.isPaid).length)
 const monthlyPayment = computed(() => debts.value.reduce((sum, d) => sum + d.amount / 12, 0))
 const installments = computed(() => debts.value.filter((d) => d.amount > 0).length)
+
+// Recent debts (last 3 entries)
+const recentDebts = computed(() =>
+  debts.value.slice(0, 3).filter((d) => d.userId === user.value?.uid),
+)
 
 // Due soon debts
 const isDueSoon = (dateStr) => {
@@ -154,143 +189,480 @@ const nextDueDays = computed(() => {
 
 // Format date
 const formatDate = (date) =>
-  new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-
-// Chart setup
-const updateChart = () => {
-  if (chartInstance) chartInstance.destroy()
-  const ctx = debtChart.value.getContext('2d')
-  chartInstance = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      //   labels: debts.value.map((d) => d.debtSource),
-      datasets: [
-        {
-          data: debts.value.map((d) => d.amount),
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.7)',
-            'rgba(54, 162, 235, 0.7)',
-            'rgba(255, 206, 86, 0.7)',
-            'rgba(75, 192, 192, 0.7)',
-            'rgba(153, 102, 255, 0.7)',
-            'rgba(255, 159, 64, 0.7)',
-          ],
-          borderColor: 'rgba(255,255,255,0.8)',
-          borderWidth: 2,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'bottom', labels: { color: darkMode.value ? '#fff' : '#212529' } },
-      },
-    },
-  })
-}
-
-onMounted(() => {
-  setTimeout(() => {
-    if (debtChart.value) updateChart()
-  }, 300)
-})
+  date
+    ? new Date(date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : 'N/A'
 
 // Summary cards config
 const summaryCards = computed(() => [
   {
-    title: 'Total Debt',
-    value: `₱${totalDebt.value.toLocaleString()}`,
-    subtitle: '-2.5% from last month',
-    textClass: 'text-danger',
-    changeClass: 'text-danger small',
-    iconClass: 'bi bi-currency-dollar fs-3 text-danger',
-    bgClass: 'bg-danger-subtle',
-  },
-  {
     title: 'Active Debts',
     value: activeDebts.value,
     subtitle: `${paidDebts.value} debts paid recently`,
-    textClass: '',
-    changeClass: '',
-    iconClass: 'bi bi-file-earmark-text fs-3 text-primary',
-    bgClass: 'bg-primary-subtle',
+    textClass: 'text-blue-600',
+    changeClass: 'text-gray-500 small',
+    iconClass: 'bi bi-file-earmark-text fs-3 text-blue-600',
+    bgClass: 'bg-blue-50',
   },
   {
     title: 'Due Soon',
     value: dueSoonDebts.value.length,
     subtitle: `Next due in ${nextDueDays.value} days`,
-    textClass: 'text-warning',
-    changeClass: 'text-warning small',
-    iconClass: 'bi bi-clock fs-3 text-warning',
-    bgClass: 'bg-warning-subtle',
+    textClass: 'text-amber-600',
+    changeClass: 'text-amber-600 small',
+    iconClass: 'bi bi-clock fs-3 text-amber-600',
+    bgClass: 'bg-amber-50',
   },
   {
     title: 'Monthly Payment',
     value: `₱${monthlyPayment.value.toLocaleString()}`,
     subtitle: `${installments.value} installments ongoing`,
-    textClass: 'text-info',
-    changeClass: '',
-    iconClass: 'bi bi-calendar-check fs-3 text-info',
-    bgClass: 'bg-info-subtle',
+    textClass: 'text-teal-600',
+    changeClass: 'text-gray-500 small',
+    iconClass: 'bi bi-calendar-check fs-3 text-teal-600',
+    bgClass: 'bg-teal-50',
+  },
+  {
+    title: 'Sangla Loans',
+    value: `₱${totalSanglaLoanAmount.value.toLocaleString()}`,
+    subtitle: 'Total collateral loan value',
+    textClass: 'text-purple-600',
+    changeClass: 'text-gray-500 small',
+    iconClass: 'bi bi-piggy-bank fs-3 text-purple-600',
+    bgClass: 'bg-purple-50',
   },
 ])
 </script>
 
 <style scoped>
+/* Base Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 .dashboard-container {
-  padding-bottom: 3rem;
-  transition: background 0.3s;
-}
-.dark-mode {
-  background-color: #121212;
-  color: #fff;
-}
-.glass-card {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: 'Inter', sans-serif;
   transition: all 0.3s ease;
+  background: transparent !important;
 }
-.dark-mode .glass-card {
-  background: rgba(32, 32, 32, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+
+.dark-mode {
+  color: #e5e7eb;
+  background: transparent !important;
 }
-.glass-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+
+.light-mode {
+  color: #111827;
+  background: transparent !important;
 }
+
+/* Rounded Box */
+.rounded-box {
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+/* Header Section */
+.header-section {
+  padding: 2rem;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .header-section {
+  background: #1f2937;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.header-underline {
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #1d4ed8, #3b82f6);
+  margin: 0.75rem auto;
+  border-radius: 2px;
+}
+
+.dark-mode .header-underline {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+/* Summary Cards */
+.summary-box {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  padding: 0 0.5rem;
+}
+
+.summary-card {
+  width: 100%;
+}
+
+.modern-card {
+  background: #ffffff;
+  border: none;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  padding: 0.75rem;
+}
+
+.dark-mode .modern-card {
+  background: #1f2937;
+  border: none;
+}
+
+.modern-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.modern-card .card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.modern-card .card-subtitle {
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.modern-card h3 {
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.modern-card .small {
+  font-size: 0.75rem;
+}
+
 .icon-circle {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
+  transition: transform 0.3s ease;
 }
-.bg-danger-subtle {
-  background-color: rgba(255, 99, 132, 0.15);
+
+.icon-circle:hover {
+  transform: scale(1.05);
 }
-.bg-primary-subtle {
-  background-color: rgba(54, 162, 235, 0.15);
+
+.bg-blue-50 {
+  background: #eff6ff;
 }
-.bg-warning-subtle {
-  background-color: rgba(255, 206, 86, 0.15);
+.bg-amber-50 {
+  background: #fffbeb;
 }
-.bg-info-subtle {
-  background-color: rgba(75, 192, 192, 0.15);
+.bg-teal-50 {
+  background: #f0fdfa;
 }
-.glass-item {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  margin: 0.25rem 0;
-  padding: 0.75rem 1rem;
-  transition: transform 0.2s;
+.bg-purple-50 {
+  background: #faf5ff;
 }
-.glass-item:hover {
-  transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.2);
+
+/* Audit Log List Styles */
+.audit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.audit-item {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  transition: all 0.3s ease;
+  position: relative;
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  align-items: center;
+}
+
+.dark-mode .audit-item {
+  background: #2d3748;
+  border: 1px solid #4b5563;
+}
+
+.audit-item:hover {
+  background: #f1f5f9;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-3px);
+}
+
+.dark-mode .audit-item:hover {
+  background: #374151;
+}
+
+/* Timeline Dot for Audit Log Style */
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  background: #1d4ed8;
+  border-radius: 50%;
+  margin-right: 1.5rem;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.15);
+  transition: background 0.3s ease;
+}
+
+.dark-mode .timeline-dot {
+  background: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+}
+
+/* Debt Details */
+.debt-details {
+  display: flex;
+  align-items: center;
+}
+
+.debt-content {
+  flex: 1;
+}
+
+.debt-details h6 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.debt-details small {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+.dark-mode .debt-details small {
+  color: #9ca3af;
+}
+
+/* Amount Badge */
+.amount-badge {
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  white-space: nowrap;
+  text-align: center;
+  transition: background 0.3s ease;
+}
+
+.dark-mode .amount-badge {
+  background: #3b82f6;
+}
+
+.amount-badge:hover {
+  background: #1e40af;
+}
+
+.dark-mode .amount-badge:hover {
+  background: #2563eb;
+}
+
+/* Button Container */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2rem;
+}
+
+/* Button Styling */
+.btn-outline-primary {
+  border: 2px solid #1d4ed8;
+  color: #1d4ed8;
+  padding: 0.75rem 2.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 1rem;
+  background: transparent;
+}
+
+.btn-outline-primary:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(29, 78, 216, 0.3);
+}
+
+.dark-mode .btn-outline-primary {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.dark-mode .btn-outline-primary:hover {
+  background: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate__animated.animate__fadeInUp {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate__animated.animate__zoomIn {
+  animation: zoomIn 0.6s ease-out;
+}
+
+/* Desktop Adjustments */
+@media (min-width: 992px) {
+  .dashboard-container {
+    padding: 2rem 3rem;
+  }
+  .header-section {
+    padding: 3rem;
+  }
+  .header-section h1 {
+    font-size: 3rem;
+  }
+  .header-section p {
+    font-size: 1.25rem;
+  }
+  .summary-box {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+  .modern-card {
+    padding: 1rem;
+  }
+  .audit-list {
+    gap: 1.25rem;
+  }
+  .audit-item {
+    padding: 1.75rem;
+    grid-template-columns: 4fr 1fr;
+  }
+  .debt-details h6 {
+    font-size: 1.3rem;
+  }
+  .debt-details small {
+    font-size: 1rem;
+  }
+  .timeline-dot {
+    width: 16px;
+    height: 16px;
+    margin-right: 2rem;
+  }
+  .amount-badge {
+    font-size: 1.1rem;
+    padding: 0.75rem 1.75rem;
+  }
+  .card-header {
+    padding: 1.75rem 2.5rem;
+  }
+  .card-body {
+    padding: 2.5rem !important;
+  }
+  .btn-outline-primary {
+    padding: 0.85rem 3rem;
+    font-size: 1.15rem;
+  }
+  .button-container {
+    padding-top: 2.5rem;
+  }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .header-section {
+    padding: 1.5rem;
+  }
+  .header-section h1 {
+    font-size: 1.75rem;
+  }
+  .header-section p {
+    font-size: 1rem;
+  }
+  .summary-box {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    padding: 0 0.25rem;
+  }
+  .modern-card {
+    padding: 0.5rem;
+  }
+  .modern-card .card-body {
+    padding: 0.75rem;
+  }
+  .modern-card .card-subtitle {
+    font-size: 0.75rem;
+  }
+  .modern-card h3 {
+    font-size: 1rem;
+  }
+  .modern-card .small {
+    font-size: 0.625rem;
+  }
+  .icon-circle {
+    width: 2rem;
+    height: 2rem;
+  }
+  .audit-item {
+    flex-direction: row;
+    align-items: center;
+    padding: 0.75rem;
+    display: flex;
+  }
+  .debt-details {
+    flex-direction: row;
+    align-items: center;
+  }
+  .debt-details h6 {
+    font-size: 0.9rem;
+  }
+  .debt-details small {
+    font-size: 0.75rem;
+  }
+  .timeline-dot {
+    width: 10px;
+    height: 10px;
+    margin-right: 0.75rem;
+  }
+  .amount-badge {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+  .btn-outline-primary {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  .button-container {
+    padding-top: 1rem;
+  }
 }
 </style>
+```

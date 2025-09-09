@@ -9,16 +9,15 @@ const app = createApp(App)
 app.use(router)
 app.mount('#app')
 
-// ✅ Auto-handled Service Worker
-import { registerSW } from 'virtual:pwa-register'
-
-const updateSW = registerSW({
-  onNeedRefresh() {
-    if (confirm('A new version is available. Reload?')) {
-      updateSW(true)
-    }
-  },
-  onOfflineReady() {
-    console.log('OwePal is ready to work offline ✅')
-  },
-})
+// --- Service Worker registration ---
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => {
+        console.log('Service Worker registered ✅', reg)
+      })
+      .catch(err => {
+        console.error('Service Worker registration failed ❌', err)
+      })
+  })
+}

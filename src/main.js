@@ -10,7 +10,9 @@ app.use(router)
 app.mount('#app')
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.ready.then((registration) => {
-    console.log('Service Worker active ✅', registration)
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('Service Worker registered ✅', reg))
+      .catch(err => console.error('SW registration failed ❌', err))
   })
 }

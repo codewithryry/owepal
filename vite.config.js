@@ -6,66 +6,87 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
-      registerType: 'autoUpdate',           // auto updates when SW changes
-      includeAssets: ['favicon.svg', 'robots.txt', 'apple-touch-icon.png'],
+      registerType: 'autoUpdate',
+      includeAssets: [
+        'favicon-16x16.png',
+        'favicon-32x32.png',
+        'favicon-96x96.png',
+        'apple-icon-180x180.png',
+        'robots.txt'
+      ],
       manifest: {
         name: 'OwePal',
         short_name: 'OwePal',
         description: 'Friendly app to track and manage what you owe — OwePal.',
-        theme_color: '#0A4DAB',             // bank-like blue
+        theme_color: '#0A4DAB',
         background_color: '#ffffff',
         display: 'standalone',
         scope: '/',
         start_url: '/',
         icons: [
           {
-            src: '/icons/icon-192.png',
+            src: '/android-icon-36x36.png',
+            sizes: '36x36',
+            type: 'image/png'
+          },
+          {
+            src: '/android-icon-48x48.png',
+            sizes: '48x48',
+            type: 'image/png'
+          },
+          {
+            src: '/android-icon-72x72.png',
+            sizes: '72x72',
+            type: 'image/png'
+          },
+          {
+            src: '/android-icon-96x96.png',
+            sizes: '96x96',
+            type: 'image/png'
+          },
+          {
+            src: '/android-icon-144x144.png',
+            sizes: '144x144',
+            type: 'image/png'
+          },
+          {
+            src: '/android-icon-192x192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: '/icons/icon-512.png',
-            sizes: '512x512',
+            src: '/apple-icon-180x180.png',
+            sizes: '180x180',
             type: 'image/png'
-          },
-          {
-            src: '/icons/maskable-icon-512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable'
           }
         ]
       },
       workbox: {
         runtimeCaching: [
           {
-            // Cache API calls (Network First)
             urlPattern: /^https:\/\/your-api-domain\.com\/.*$/i,
-
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 24 * 60 * 60 // 1 day
+                maxAgeSeconds: 24 * 60 * 60
               },
               networkTimeoutSeconds: 10
             }
           },
           {
-            // Static assets (Cache First)
-            urlPattern: /\.(?:js|css|png|jpg|jpeg|svg|webp|ico)$/,
+            urlPattern: /\.(?:js|css|png|jpg|jpeg|svg|webp|ico)$/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'asset-cache',
               expiration: {
                 maxEntries: 200,
-                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
+                maxAgeSeconds: 30 * 24 * 60 * 60
               }
             }
           },
           {
-            // Fonts
             urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
             handler: 'CacheFirst',
             options: {
@@ -79,7 +100,7 @@ export default defineConfig({
         ]
       },
       devOptions: {
-        enabled: true, // enable PWA during `vite` dev (optional)
+        enabled: true
       }
     })
   ]

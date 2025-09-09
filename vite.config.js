@@ -32,7 +32,7 @@ export default defineConfig({
             src: '/icons/maskable-icon-512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'maskable any'
+            purpose: 'maskable'
           }
         ]
       },
@@ -41,7 +41,7 @@ export default defineConfig({
           {
             // Cache API calls (Network First)
             urlPattern: /^https:\/\/your-api-domain\.com\/.*$/i,
-            
+
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',

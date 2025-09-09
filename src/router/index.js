@@ -10,6 +10,12 @@ import DebtAnalytics from '../views/DebtAnalytics.vue'
 import DebtTracker from '../views/DebtTracker.vue'
 import Add from '../views/Add.vue'
 import Reminders from '../views/Reminders.vue'
+import EditProfile from '../views/EditProfile.vue' 
+import BudgetExpense from '../views/BudgetExpense.vue'
+import ExportCsv from '../views/ExportCsv.vue'
+import BackupCloud from '../views/BackupCloud.vue'
+
+
 
 const routes = [
   { path: '/', component: Home, meta: { requiresAuth: true, name: 'Home' } },
@@ -20,9 +26,19 @@ const routes = [
     component: DebtAnalytics,
     meta: { requiresAuth: true, name: 'Debt Analytics' },
   },
+  {
+    path: '/edit-profile',
+    name: 'EditProfile',
+    component: EditProfile,
+    meta: { requiresAuth: true, name: 'Profile' }
+  },
   { path: '/debts', component: DebtTracker, meta: { requiresAuth: true, name: 'Debt Tracker' } },
   { path: '/add', component: Add, meta: { requiresAuth: true, name: 'Add Debt' } },
   { path: '/reminders', component: Reminders, meta: { requiresAuth: true, name: 'Reminders' } },
+  { path: '/budget', name: 'BudgetExpense', component: BudgetExpense, meta: { name: 'Budget Expense' } },
+  { path: '/export', name: 'ExportCsv', component: ExportCsv, meta: { name: 'Export CSV' } },
+  { path: '/backup', name: 'BackupCloud', component: BackupCloud, meta: { name: 'Backup Cloud' } }
+
 ]
 
 const router = createRouter({
@@ -59,7 +75,7 @@ router.beforeEach(async (to, from, next) => {
     next('/')
   } else {
     // Dynamically set the page title
-    document.title = to.meta.name ? `${to.meta.name} | eDEBTZero` : 'eDEBTZero'
+    document.title = to.meta.name ? `${to.meta.name} ` : 'OwePal'
     next()
   }
 })

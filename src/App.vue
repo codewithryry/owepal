@@ -18,22 +18,19 @@
           {{ currentPageTitle }}
         </div>
         <!-- Settings icon on the right -->
-        <div class="settings-icon" @click="toggleSettingsMenu">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="currentColor"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"
-            />
-            <path
-              d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"
-            />
-          </svg>
-        </div>
+      <div class="settings-icon" @click="toggleSettingsMenu">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="currentColor"
+          viewBox="0 0 32 32"
+        >
+          <path d="M13 16c0 1.654 1.346 3 3 3s3-1.346 3-3-1.346-3-3-3-3 1.346-3 3z"/>
+          <path d="M13 26c0 1.654 1.346 3 3 3s3-1.346 3-3-1.346-3-3-3-3 1.346-3 3z"/>
+          <path d="M13 6c0 1.654 1.346 3 3 3s3-1.346 3-3-1.346-3-3-3-3 1.346-3 3z"/>
+        </svg>
+      </div>
       </div>
     </header>
 
@@ -131,7 +128,7 @@
         <span class="nav-label">Analytics</span>
       </router-link>
     </nav>
-
+    
     <!-- Account Settings Dropdown Menu -->
     <div v-if="accountMenuOpen" class="user-dropdown-container">
       <div class="user-dropdown-overlay" @click="toggleAccountMenu"></div>
@@ -153,7 +150,7 @@
           </div>
         </div>
         <div class="dropdown-actions">
-          <button class="dropdown-item">
+          <router-link to="/edit-profile" class="dropdown-item" @click="toggleAccountMenu">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -166,7 +163,7 @@
               />
             </svg>
             Edit Profile
-          </button>
+          </router-link>
           <button @click="handleSignOut" class="dropdown-item sign-out">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -189,8 +186,37 @@
     <div v-if="settingsMenuOpen" class="settings-dropdown-container">
       <div class="settings-dropdown-overlay" @click="toggleSettingsMenu"></div>
       <div class="settings-dropdown-content glass">
-        <div class="dropdown-actions">
-          <button @click="toggleDarkMode" class="dropdown-item">
+        <div class="dropdown-actions">     
+      <!-- Budget & Expense Tracking -->
+       <button @click="goTo('/budget')" class="dropdown-item">
+      <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21 7H3v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7zM6 9h12v2H6V9z" />
+        <path d="M3 5h18v2H3z" />
+      </svg>
+      Budget & Expense Tracking
+    </button>
+
+    <!-- Export CSV -->
+    <button @click="goTo('/export')" class="dropdown-item">
+      <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M5 20h14v-2H5v2z" />
+        <path d="M11 16h2V8h3l-4-5-4 5h3v8z" />
+      </svg>
+      Export as CSV
+    </button>
+        <!-- Backup to Cloud (Coming Soon) -->
+        <button class="dropdown-item" disabled title="Coming Soon">
+          <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 18H6a4 4 0 1 1 .22-7.998A5 5 0 0 1 18 7a5 5 0 0 1 .9 9.988z"/>
+            <path d="M12 12v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9 15l3-3 3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Backup to Cloud
+          <span style="margin-left: 6px; font-size: 0.75rem; color: gray;">(Coming Soon)</span>
+        </button>
+
+
+                  <button @click="toggleDarkMode" class="dropdown-item">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -204,29 +230,18 @@
             </svg>
             {{ darkMode ? 'Light Mode' : 'Dark Mode' }}
           </button>
-          <router-link to="/debug" class="dropdown-item" @click="toggleSettingsMenu">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"
-              />
-              <path
-                d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0zM7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"
-              />
-            </svg>
-            Debug
-          </router-link>
+
         </div>
       </div>
     </div>
 
     <div v-if="showInfo" class="modal-backdrop fade show"></div>
   </div>
+
+      <!-- AI Assistant Component -->
+    <AiAssistant v-if="route.path !== '/login'" />
+
+
 </template>
 
 <script setup>
@@ -234,6 +249,7 @@ import { ref, onMounted, provide, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { signOut, onAuthStateChanged } from 'firebase/auth'
 import { auth } from './firebase/config'
+import AiAssistant from './components/AiAssistant.vue'
 
 const showInfo = ref(false)
 const user = ref(null)
@@ -260,21 +276,37 @@ const userInitials = computed(() => {
 const currentPageTitle = computed(() => {
   switch (route.path) {
     case '/':
-      return 'Dashboard'
+      return 'DASHBOARD'
     case '/debts':
-      return 'Debts'
+      return 'DEBTS'
     case '/add':
-      return 'Add'
+      return 'ADD DEBT'
     case '/reminders':
-      return 'Reminders'
+      return 'REMINDERS'
     case '/analytics':
-      return 'Analytics'
+      return 'ANALYTICS'
     case '/debug':
-      return 'Debug'
+      return 'DEBUG'
+    case '/edit-profile':
+      return 'EDIT PROFILE'
+    case '/login':
+      return 'LOGIN'
+    case '/budget':
+      return 'BUDGET & EXPENSE'
+    case '/export':
+      return 'EXPORT CSV'
+    case '/backup':
+      return 'BACKUP TO CLOUD'
     default:
-      return 'Dashboard'
+      return 'DASHBOARD'
   }
 })
+
+// Navigate and close settings dropdown
+function goTo(path) {
+  router.push(path)
+  settingsMenuOpen.value = false // Close the settings dropdown
+}
 
 provide('user', user)
 provide('darkMode', darkMode)
@@ -541,6 +573,12 @@ const handleSignOut = async () => {
   to {
     transform: translateY(0);
   }
+}
+
+
+.user-dropdown-container,
+.settings-dropdown-container {
+  z-index: 9999; /* force above AI Assistant */
 }
 
 .user-info {

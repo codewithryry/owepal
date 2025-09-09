@@ -1,11 +1,18 @@
-```vue
 <template>
   <div
     v-if="user"
     class="dashboard-container min-vh-100 py-5 px-3"
     :class="darkMode ? 'dark-mode' : 'light-mode'"
   >
-    <!-- Header with Total Debt (Unchanged) -->
+    <!-- Header with Greeting and Time on Left
+    <div class="header-left-section mb-3">
+      <h3 class="fw-bold fs-4 mb-0 animate__animated animate__fadeIn">
+        {{ greetingMessage }}, {{ user.displayName || 'User' }}!
+      </h3>
+      <br></br>
+    </div> -->
+
+    <!-- Total Debt Section -->
     <div class="header-section text-center mb-5 rounded-box">
       <h1 class="fw-bold display-4 animate__animated animate__fadeIn">
         ₱{{ totalDebt.toLocaleString() }}
@@ -17,7 +24,7 @@
       <div class="header-underline"></div>
     </div>
 
-    <!-- Summary Cards (Unchanged) -->
+    <!-- Summary Cards -->
     <div class="summary-box mb-5">
       <div v-for="card in summaryCards" :key="card.title" class="summary-card">
         <div class="card modern-card h-100 rounded-box shadow-sm animate__animated animate__zoomIn">
@@ -37,7 +44,7 @@
       </div>
     </div>
 
-    <!-- Due Soon Section (Box Container Removed) -->
+    <!-- Due Soon Section -->
     <div class="row g-4 mb-5">
       <div class="col-12">
         <div class="animate__animated animate__fadeInUp">
@@ -77,7 +84,7 @@
       </div>
     </div>
 
-    <!-- Recent Transactions Section (Box Container Removed, Unchanged) -->
+    <!-- Recent Transactions Section -->
     <div class="row g-4 mb-5">
       <div class="col-12">
         <div class="animate__animated animate__fadeInUp">
@@ -144,48 +151,99 @@ onMounted(() => {
       orderBy('createdAt', 'desc'),
     )
     onSnapshot(debtsQuery, (snapshot) => {
-      debts.value = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+      debts.value = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        // Default void to false for backward compatibility
+        void: doc.data().void || false
+      }))
     })
+
+    // Start updating time
+    updateTime()
+    setInterval(updateTime, 1000) // Update every second
   }
 })
 
-// Calculate totals
-const totalDebt = computed(() => debts.value.reduce((sum, d) => sum + d.amount, 0))
+// Time and Greeting Logic
+const currentTime = ref('')
+const greetingMessage = ref('')
+
+const updateTime = () => {
+  const now = new Date()
+  currentTime.value = now.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+  })
+
+  const hour = now.getHours()
+  if (hour < 12) {
+    greetingMessage.value = 'Good Morning'
+  } else if (hour < 18) {
+    greetingMessage.value = 'Good Afternoon'
+  } else {
+    greetingMessage.value = 'Good Evening'
+  }
+}
+
+// Calculate totals, excluding voided debts
+const totalDebt = computed(() =>
+  debts.value
+    .filter((d) => !d.void)
+    .reduce((sum, d) => sum + (d.amount || 0), 0)
+)
+
 const totalSanglaLoanAmount = computed(() =>
-  debts.value.reduce(
-    (sum, d) => sum + (d.loanType === 'Sangla' && d.loanAmount ? d.loanAmount : 0),
-    0,
-  ),
+  debts.value
+    .filter((d) => !d.void && d.loanType === 'Sangla')
+    .reduce((sum, d) => sum + (d.loanAmount || 0), 0)
 )
-const activeDebts = computed(() => debts.value.filter((d) => !d.isPaid).length)
-const paidDebts = computed(() => debts.value.filter((d) => d.isPaid).length)
-const monthlyPayment = computed(() => debts.value.reduce((sum, d) => sum + d.amount / 12, 0))
-const installments = computed(() => debts.value.filter((d) => d.amount > 0).length)
 
-// Recent debts (last 3 entries)
+const activeDebts = computed(() =>
+  debts.value.filter((d) => !d.void && !d.isPaid).length
+)
+
+const paidDebts = computed(() =>
+  debts.value.filter((d) => d.void).length // Count voided debts as paid
+)
+
+const monthlyPayment = computed(() =>
+  debts.value
+    .filter((d) => !d.void)
+    .reduce((sum, d) => sum + (d.amount || 0) / 12, 0)
+)
+
+const installments = computed(() =>
+  debts.value.filter((d) => !d.void && d.amount > 0).length
+)
+
+// Recent debts (last 3 non-voided entries)
 const recentDebts = computed(() =>
-  debts.value.slice(0, 3).filter((d) => d.userId === user.value?.uid),
+  debts.value
+    .filter((d) => !d.void && d.userId === user.value?.uid)
+    .slice(0, 3)
 )
 
-// Due soon debts
-const isDueSoon = (dateStr) => {
+// Due soon debts, excluding voided debts
+const isDueSoon = (dateStr, loanType) => {
   if (!dateStr) return false
   const today = new Date()
-  const renewal = new Date(dateStr)
-  const diffDays = Math.ceil((renewal - today) / (1000 * 60 * 60 * 24))
+  const targetDate = new Date(dateStr)
+  const diffDays = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24))
   return diffDays <= 7 && diffDays >= 0
 }
+
 const dueSoonDebts = computed(() =>
-  debts.value.filter((d) => d.renewalDate && !d.isPaid && isDueSoon(d.renewalDate)),
+  debts.value.filter(
+    (d) =>
+      !d.void &&
+      !d.isPaid &&
+      ((d.renewalDate && d.loanType === 'Sangla' && isDueSoon(d.renewalDate, d.loanType)) ||
+       (d.dueDate && ['Splaylater', 'Gloan', 'Gredit'].includes(d.loanType) && isDueSoon(d.dueDate, d.loanType)))
+  )
 )
-const nextDueDays = computed(() => {
-  if (!dueSoonDebts.value.length) return 0
-  const soonest = dueSoonDebts.value.reduce((min, debt) => {
-    const debtDate = new Date(debt.renewalDate)
-    return debtDate < min ? debtDate : min
-  }, new Date(dueSoonDebts.value[0].renewalDate))
-  return Math.ceil((soonest - new Date()) / (1000 * 60 * 60 * 24))
-})
 
 // Format date
 const formatDate = (date) =>
@@ -200,6 +258,15 @@ const formatDate = (date) =>
 // Summary cards config
 const summaryCards = computed(() => [
   {
+    title: 'Monthly Payment',
+    value: `₱${monthlyPayment.value.toLocaleString()}`,
+    subtitle: `${installments.value} installments ongoing`,
+    textClass: 'text-teal-600',
+    changeClass: 'text-gray-500 small',
+    iconClass: 'bi bi-calendar-check fs-3 text-teal-600',
+    bgClass: 'bg-teal-50',
+  },
+  {
     title: 'Active Debts',
     value: activeDebts.value,
     subtitle: `${paidDebts.value} debts paid recently`,
@@ -209,22 +276,13 @@ const summaryCards = computed(() => [
     bgClass: 'bg-blue-50',
   },
   {
-    title: 'Due Soon',
-    value: dueSoonDebts.value.length,
-    subtitle: `Next due in ${nextDueDays.value} days`,
-    textClass: 'text-amber-600',
-    changeClass: 'text-amber-600 small',
-    iconClass: 'bi bi-clock fs-3 text-amber-600',
-    bgClass: 'bg-amber-50',
-  },
-  {
-    title: 'Monthly Payment',
-    value: `₱${monthlyPayment.value.toLocaleString()}`,
-    subtitle: `${installments.value} installments ongoing`,
-    textClass: 'text-teal-600',
-    changeClass: 'text-gray-500 small',
-    iconClass: 'bi bi-calendar-check fs-3 text-teal-600',
-    bgClass: 'bg-teal-50',
+    title: 'Already Paid',
+    value: paidDebts.value,
+    subtitle: `Total paid debts`,
+    textClass: 'text-green-600',
+    changeClass: 'text-green-600 small',
+    iconClass: 'bi bi-check-circle fs-3 text-green-600',
+    bgClass: 'bg-green-50',
   },
   {
     title: 'Sangla Loans',
@@ -236,6 +294,7 @@ const summaryCards = computed(() => [
     bgClass: 'bg-purple-50',
   },
 ])
+
 </script>
 
 <style scoped>
@@ -264,7 +323,22 @@ const summaryCards = computed(() => [
   overflow: hidden;
 }
 
-/* Header Section */
+/* Header Left Section */
+.header-left-section {
+  text-align: left;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.header-left-section h3 {
+  margin-bottom: 0.25rem;
+}
+
+.header-left-section p {
+  margin-bottom: 0;
+}
+
+/* Total Debt Header Section */
 .header-section {
   padding: 2rem;
   background: #ffffff;
@@ -358,8 +432,8 @@ const summaryCards = computed(() => [
 .bg-blue-50 {
   background: #eff6ff;
 }
-.bg-amber-50 {
-  background: #fffbeb;
+.bg-green-50 {
+  background: #f0fdf4;
 }
 .bg-teal-50 {
   background: #f0fdfa;
@@ -543,14 +617,24 @@ const summaryCards = computed(() => [
   .dashboard-container {
     padding: 2rem 3rem;
   }
+  
+  .header-left-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .header-left-section h3 {
+    font-size: 1.5rem;
+  }
+  
+  .header-left-section p {
+    font-size: 1rem;
+  }
+  
   .header-section {
     padding: 3rem;
   }
   .header-section h1 {
     font-size: 3rem;
-  }
-  .header-section p {
-    font-size: 1.25rem;
   }
   .summary-box {
     grid-template-columns: repeat(4, 1fr);
@@ -598,14 +682,24 @@ const summaryCards = computed(() => [
 
 /* Mobile Adjustments */
 @media (max-width: 768px) {
+  .header-left-section {
+    margin-bottom: 0.75rem;
+    text-align: left;
+  }
+  
+  .header-left-section h3 {
+    font-size: 1.25rem;
+  }
+  
+  .header-left-section p {
+    font-size: 0.875rem;
+  }
+  
   .header-section {
     padding: 1.5rem;
   }
   .header-section h1 {
     font-size: 1.75rem;
-  }
-  .header-section p {
-    font-size: 1rem;
   }
   .summary-box {
     grid-template-columns: repeat(2, 1fr);
@@ -665,4 +759,3 @@ const summaryCards = computed(() => [
   }
 }
 </style>
-```

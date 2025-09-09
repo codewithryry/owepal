@@ -41,6 +41,7 @@ export default defineConfig({
           {
             // Cache API calls (Network First)
             urlPattern: /^https:\/\/your-api-domain\.com\/.*$/i,
+            
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',

@@ -1,6 +1,6 @@
 <template>
   <div class="container py-5">
-    <h2 class="mb-4">Debug Information (v1.2)</h2>
+    <h2 class="mb-4">Debug Information (v1.54)</h2>
     <p class="text-muted mb-4">Developed by: Codewithryry</p>
 
     <div class="row gy-4">

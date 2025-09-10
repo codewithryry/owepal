@@ -15,8 +15,8 @@ export default defineConfig({
         'robots.txt'
       ],
       manifest: {
-        name: 'OwePal',
-        short_name: 'OwePal',
+        name: '',
+        short_name: '',
         description: 'Friendly app to track and manage what you owe — OwePal.',
         theme_color: '#0A4DAB',
         background_color: '#ffffff',

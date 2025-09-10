@@ -6,7 +6,7 @@
     ]"
   >
     <!-- Fixed Header (Hidden on login page) -->
-    <header v-if="route.path !== '/login'" class="header glass">
+    <header v-if="route.path !== '/owePal'" class="header glass">
       <div class="header-content">
         <!-- Profile on the left -->
         <div v-if="user" class="profile-avatar" @click="toggleAccountMenu">
@@ -17,20 +17,25 @@
         <div class="header-title">
           {{ currentPageTitle }}
         </div>
-        <!-- Settings icon on the right -->
-      <div class="settings-icon" @click="toggleSettingsMenu">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="currentColor"
-          viewBox="0 0 32 32"
+        <!-- Reminders icon on the right -->
+        <router-link
+          v-if="$route.path !== '/login'"
+          to="/reminders"
+          class="reminders-icon"
         >
-          <path d="M13 16c0 1.654 1.346 3 3 3s3-1.346 3-3-1.346-3-3-3-3 1.346-3 3z"/>
-          <path d="M13 26c0 1.654 1.346 3 3 3s3-1.346 3-3-1.346-3-3-3-3 1.346-3 3z"/>
-          <path d="M13 6c0 1.654 1.346 3 3 3s3-1.346 3-3-1.346-3-3-3-3 1.346-3 3z"/>
-        </svg>
-      </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"
+            />
+          </svg>
+        </router-link>
+
       </div>
     </header>
 
@@ -40,7 +45,7 @@
     </main>
 
     <!-- Bottom Navigation Bar (Hidden on login page) -->
-    <nav v-if="route.path !== '/login'" class="bottom-nav glass">
+    <nav v-if="route.path !== '/login' && route.path !== '/owePal'" class="bottom-nav glass">
       <router-link to="/" class="nav-item" active-class="active">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -89,21 +94,6 @@
         <span class="nav-label">Add</span>
       </router-link>
 
-      <router-link to="/reminders" class="nav-item" active-class="active">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="currentColor"
-          viewBox="0 0 16 16"
-        >
-          <path
-            d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"
-          />
-        </svg>
-        <span class="nav-label">Reminders</span>
-      </router-link>
-
       <router-link to="/analytics" class="nav-item" active-class="active">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -127,6 +117,34 @@
         </svg>
         <span class="nav-label">Analytics</span>
       </router-link>
+
+            <router-link to="/settings" class="nav-item" active-class="active">
+        <svg
+          viewBox="0 -0.5 21 21"
+          width="24"
+          height="24"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+        >
+          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+          <g id="SVGRepo_iconCarrier">
+            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+              <g id="Dribbble-Light-Preview" transform="translate(-59.000000, -200.000000)" fill="currentColor">
+                <g id="icons" transform="translate(56.000000, 160.000000)">
+                  <path
+                    d="M14.55,60 L24,60 L24,51 L14.55,51 L14.55,60 Z M3,60 L12.45,60 L12.45,51 L3,51 L3,60 Z M14.55,49 L24,49 L24,40 L14.55,40 L14.55,49 Z M3,49 L12.45,49 L12.45,40 L3,40 L3,49 Z"
+                    id="menu_navigation_grid-[#1530]"
+                  ></path>
+                </g>
+              </g>
+            </g>
+          </g>
+        </svg>
+        <span class="nav-label">More</span>
+      </router-link>
+
     </nav>
     
     <!-- Account Settings Dropdown Menu -->
@@ -182,66 +200,11 @@
       </div>
     </div>
 
-    <!-- Settings Dropdown Menu -->
-    <div v-if="settingsMenuOpen" class="settings-dropdown-container">
-      <div class="settings-dropdown-overlay" @click="toggleSettingsMenu"></div>
-      <div class="settings-dropdown-content glass">
-        <div class="dropdown-actions">     
-      <!-- Budget & Expense Tracking -->
-       <button @click="goTo('/budget')" class="dropdown-item">
-      <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M21 7H3v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7zM6 9h12v2H6V9z" />
-        <path d="M3 5h18v2H3z" />
-      </svg>
-      Budget & Expense Tracking
-    </button>
-
-    <!-- Export CSV -->
-    <button @click="goTo('/export')" class="dropdown-item">
-      <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M5 20h14v-2H5v2z" />
-        <path d="M11 16h2V8h3l-4-5-4 5h3v8z" />
-      </svg>
-      Export as CSV
-    </button>
-        <!-- Backup to Cloud (Coming Soon) -->
-        <button class="dropdown-item" disabled title="Coming Soon">
-          <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 18H6a4 4 0 1 1 .22-7.998A5 5 0 0 1 18 7a5 5 0 0 1 .9 9.988z"/>
-            <path d="M12 12v6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M9 15l3-3 3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Backup to Cloud
-          <span style="margin-left: 6px; font-size: 0.75rem; color: gray;">(Coming Soon)</span>
-        </button>
-
-
-                  <button @click="toggleDarkMode" class="dropdown-item">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.707l1.414-1.415a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"
-              />
-            </svg>
-            {{ darkMode ? 'Light Mode' : 'Dark Mode' }}
-          </button>
-
-        </div>
-      </div>
-    </div>
-
     <div v-if="showInfo" class="modal-backdrop fade show"></div>
   </div>
 
-      <!-- AI Assistant Component -->
-    <AiAssistant v-if="route.path !== '/login'" />
-
-
+  <!-- AI Assistant Component -->
+  <!-- <AiAssistant v-if="route.path !== '/login'" /> -->
 </template>
 
 <script setup>
@@ -256,7 +219,6 @@ const user = ref(null)
 const userLoading = ref(true)
 const darkMode = ref(false)
 const accountMenuOpen = ref(false)
-const settingsMenuOpen = ref(false)
 const router = useRouter()
 const route = useRoute()
 
@@ -291,22 +253,12 @@ const currentPageTitle = computed(() => {
       return 'EDIT PROFILE'
     case '/login':
       return 'LOGIN'
-    case '/budget':
-      return 'BUDGET & EXPENSE'
-    case '/export':
-      return 'EXPORT CSV'
-    case '/backup':
-      return 'BACKUP TO CLOUD'
+    case '/settings':
+      return 'SETTINGS'
     default:
       return 'DASHBOARD'
   }
 })
-
-// Navigate and close settings dropdown
-function goTo(path) {
-  router.push(path)
-  settingsMenuOpen.value = false // Close the settings dropdown
-}
 
 provide('user', user)
 provide('darkMode', darkMode)
@@ -326,20 +278,8 @@ onMounted(() => {
   }
 })
 
-const toggleDarkMode = () => {
-  darkMode.value = !darkMode.value
-  localStorage.setItem('darkMode', darkMode.value)
-  document.documentElement.setAttribute('data-bs-theme', darkMode.value ? 'dark' : 'light')
-}
-
 const toggleAccountMenu = () => {
   accountMenuOpen.value = !accountMenuOpen.value
-  if (settingsMenuOpen.value) settingsMenuOpen.value = false // Close settings menu if open
-}
-
-const toggleSettingsMenu = () => {
-  settingsMenuOpen.value = !settingsMenuOpen.value
-  if (accountMenuOpen.value) accountMenuOpen.value = false // Close account menu if open
 }
 
 const handleSignOut = async () => {
@@ -355,12 +295,9 @@ const handleSignOut = async () => {
 
 <style scoped>
 .font-sans {
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
-    'Helvetica Neue', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* Header Styles */
 .header {
   position: fixed;
   top: 0;
@@ -422,9 +359,11 @@ const handleSignOut = async () => {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.settings-icon {
+.reminders-icon {
   cursor: pointer;
   padding: 0.5rem;
+  color: inherit;
+  text-decoration: none;
 }
 
 .bottom-nav {
@@ -531,41 +470,6 @@ const handleSignOut = async () => {
   background-color: #2a2a2a;
 }
 
-/* Settings Dropdown Styles */
-.settings-dropdown-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2000;
-  display: flex;
-  align-items: flex-end;
-}
-
-.settings-dropdown-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.settings-dropdown-content {
-  position: relative;
-  width: 100%;
-  background-color: white;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  padding: 1.5rem;
-  z-index: 2001;
-  animation: slideUp 0.3s ease-out;
-}
-[data-bs-theme='dark'] .settings-dropdown-content {
-  background-color: #2a2a2a;
-}
-
 @keyframes slideUp {
   from {
     transform: translateY(100%);
@@ -575,9 +479,7 @@ const handleSignOut = async () => {
   }
 }
 
-
-.user-dropdown-container,
-.settings-dropdown-container {
+.user-dropdown-container {
   z-index: 9999; /* force above AI Assistant */
 }
 

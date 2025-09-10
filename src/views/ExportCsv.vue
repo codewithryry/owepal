@@ -154,7 +154,8 @@ onMounted(fetchUserData)
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 .page-container {
-  font-family: 'Inter', sans-serif;
+  margin-top: -2rem;
+  font-family: 'Poppins', sans-serif;
   transition: all 0.3s ease;
   background: transparent !important;
 }

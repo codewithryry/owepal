@@ -66,7 +66,7 @@
     <!-- Expense Input -->
     <div class="expense-input mb-5 rounded-box shadow-sm animate__animated animate__fadeInUp">
       <div class="card-header p-3 border-0">
-        <h5 class="fw-bold mb-0">Add New Expense</h5>
+        <h5 class="fw-bold mb-0">New Expense</h5>
       </div>
       <div class="card-body p-3">
         <div class="flex flex-col md:flex-row gap-2">
@@ -220,7 +220,8 @@ onMounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 .dashboard-container {
-  font-family: 'Inter', sans-serif;
+  margin-top: -2rem;
+  font-family: 'Poppins', sans-serif;
   transition: all 0.3s ease;
   background: transparent !important;
 }
@@ -279,6 +280,7 @@ onMounted(() => {
 
 /* Summary Cards */
 .summary-box {
+  margin-top: -2rem;
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.75rem;
@@ -602,6 +604,34 @@ onMounted(() => {
 .animate__animated.animate__zoomIn {
   animation: zoomIn 0.5s ease-out;
 }
+
+/* Section spacing utilities */
+.mt-section {
+  margin-top: 1rem; /* Default spacing between sections */
+}
+
+.mt-small {
+  margin-top: .4rem;
+}
+
+.mt-large {
+  margin-top: 3rem;
+}
+
+/* Apply consistent spacing instead of negative margins */
+.dashboard-container {
+  margin-top: -2rem; /* reset */
+}
+
+.summary-box {
+  margin-top: 2rem; /* consistent spacing under header */
+}
+
+.header-section {
+  margin-top: 0; /* header always flush with container top */
+}
+
+
 
 /* Desktop Adjustments */
 @media (min-width: 992px) {

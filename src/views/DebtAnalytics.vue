@@ -274,6 +274,7 @@ onMounted(() => {
 
 <style scoped>
 h2 {
+  font-family: 'Poppins', sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
 }
@@ -292,6 +293,7 @@ h2 {
 }
 
 .card-title {
+   font-family: 'Poppins', sans-serif;
   font-size: 1.1rem;
   color: #757575;
 }
@@ -304,6 +306,7 @@ h2 {
 }
 
 .glass-item {
+   font-family: 'Poppins', sans-serif;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   transition: all 0.2s ease;
@@ -328,4 +331,17 @@ h2 {
   background-color: #0d6efd;
   border-radius: 0.5rem;
 }
+
+/* Loan Type Breakdown section spacing */
+.row.g-4 {
+  margin-top: -0.9rem !important;  /* bring section closer up */
+
+}
+
+.card-body {
+  padding-top: 1rem !important; /* less padding inside card */
+  padding-bottom: 1rem !important;
+}
+
+
 </style>

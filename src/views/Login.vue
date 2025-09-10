@@ -1,6 +1,5 @@
 <template>
-  <div class="container py-5">
-    <h2 class="mb-4">Login</h2>
+  <div>
     <Auth @authenticated="handleAuthentication" />
   </div>
 </template>

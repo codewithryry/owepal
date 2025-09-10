@@ -14,7 +14,8 @@ import EditProfile from '../views/EditProfile.vue'
 import BudgetExpense from '../views/BudgetExpense.vue'
 import ExportCsv from '../views/ExportCsv.vue'
 import BackupCloud from '../views/BackupCloud.vue'
-
+import Settings from '../views/Settings.vue'
+import Owepal from '../views/Owepal.vue'
 
 
 const routes = [
@@ -37,7 +38,9 @@ const routes = [
   { path: '/reminders', component: Reminders, meta: { requiresAuth: true, name: 'Reminders' } },
   { path: '/budget', name: 'BudgetExpense', component: BudgetExpense, meta: { name: 'Budget Expense' } },
   { path: '/export', name: 'ExportCsv', component: ExportCsv, meta: { name: 'Export CSV' } },
-  { path: '/backup', name: 'BackupCloud', component: BackupCloud, meta: { name: 'Backup Cloud' } }
+  { path: '/backup', name: 'BackupCloud', component: BackupCloud, meta: { name: 'Backup Cloud' } },
+  {path: '/settings', name: 'Settings',component:Settings, meta: {requiresAuth: true, name: 'Settings'}},
+  { path: '/owePal', component: Owepal, meta: { requiresAuth: false, name: 'Welcome' } }
 
 ]
 
@@ -70,8 +73,8 @@ router.beforeEach(async (to, from, next) => {
   const user = await getCurrentUser()
 
   if (requiresAuth && !user) {
-    next('/login')
-  } else if (to.path === '/login' && user) {
+    next('/owePal')
+  } else if (to.path === '/owePal' && user) {
     next('/')
   } else {
     // Dynamically set the page title

@@ -56,7 +56,7 @@
       </div>
 
       <!-- Audit Logs -->
-      <div class="col-12">
+      <!-- <div class="col-12">
         <h5>Audit Logs ({{ auditLogs.length }})</h5>
         <div v-if="auditLogsLoading" class="text-muted">Loading audit logs...</div>
         <div v-else class="table-responsive">
@@ -82,7 +82,8 @@
             </tbody>
           </table>
         </div>
-      </div>
+      </div> -->
+
     </div>
   </div>
 </template>
@@ -196,3 +197,9 @@ onMounted(() => {
   })
 })
 </script>
+<style>
+.container {
+  margin-top: -2rem !important;
+  padding-top: 2.5rem !important; /* replaces py-5 */
+}
+</style>

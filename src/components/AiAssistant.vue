@@ -168,7 +168,7 @@ onMounted(() => {
 <style scoped>
 .ai-assistant {
   position: fixed;
-  bottom: 100px; /* above bottom navbar */
+  bottom: 40px; /* above bottom navbar */
   right: 20px;
   width: 320px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -178,8 +178,8 @@ onMounted(() => {
 
 .toggle-btn {
   position: fixed;
-  bottom: 120px; /* lifted above bottom nav */
-  right: 20px;
+  bottom: 40px; /* lifted above bottom nav */
+  right: 40px;
   background: var(--bs-primary);
   color: white;
   border: none;
@@ -409,7 +409,7 @@ onMounted(() => {
 @media (max-width: 480px) {
   .ai-assistant {
     right: 15px;
-    bottom: 120px; /* stays above bottom navbar */
+    bottom: 40px; /* stays above bottom navbar */
     width: 320px;
     max-width: 90vw; /* prevent overflow */
   }

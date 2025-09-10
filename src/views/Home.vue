@@ -44,46 +44,6 @@
       </div>
     </div>
 
-    <!-- Due Soon Section -->
-    <div class="row g-4 mb-5">
-      <div class="col-12">
-        <div class="animate__animated animate__fadeInUp">
-          <div class="card-header d-flex justify-content-between align-items-center p-4 border-0">
-            <h5 class="fw-bold mb-0">Due Soon</h5>
-            <span class="badge bg-primary text-white">{{ dueSoonDebts.length }}</span>
-          </div>
-          <div class="card-body p-4 d-flex flex-column">
-            <div v-if="dueSoonDebts.length" class="audit-list">
-              <div
-                v-for="debt in dueSoonDebts"
-                :key="debt.id"
-                class="audit-item d-flex justify-content-between align-items-center mb-3"
-              >
-                <div class="debt-details d-flex align-items-center">
-                  <div class="timeline-dot"></div>
-                  <div class="debt-content">
-                    <h6 class="fw-semibold mb-1">{{ debt.debtSource }}</h6>
-                    <small class="text-muted">
-                      Due: {{ formatDate(debt.renewalDate) }}<br />
-                      Amount: ₱{{ debt.amount.toLocaleString() }}
-                      <span v-if="debt.loanType === 'Sangla' && debt.loanAmount">
-                        <br />Loan Amount: ₱{{ debt.loanAmount.toLocaleString() }}
-                      </span>
-                    </small>
-                  </div>
-                </div>
-                <span class="amount-badge">₱{{ debt.amount.toLocaleString() }}</span>
-              </div>
-            </div>
-            <div v-else class="text-center py-5">
-              <i class="bi bi-check-circle text-success fs-1 mb-3"></i>
-              <p class="text-muted">No debts due soon. You're on track!</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Recent Transactions Section -->
     <div class="row g-4 mb-5">
       <div class="col-12">
@@ -130,6 +90,47 @@
         </div>
       </div>
     </div>
+
+        <!-- Due Soon Section -->
+    <div class="row g-4 mb-5">
+      <div class="col-12">
+        <div class="animate__animated animate__fadeInUp">
+          <div class="card-header d-flex justify-content-between align-items-center p-4 border-0">
+            <h5 class="fw-bold mb-0">Due Soon</h5>
+            <span class="badge bg-primary text-white">{{ dueSoonDebts.length }}</span>
+          </div>
+          <div class="card-body p-4 d-flex flex-column">
+            <div v-if="dueSoonDebts.length" class="audit-list">
+              <div
+                v-for="debt in dueSoonDebts"
+                :key="debt.id"
+                class="audit-item d-flex justify-content-between align-items-center mb-3"
+              >
+                <div class="debt-details d-flex align-items-center">
+                  <div class="timeline-dot"></div>
+                  <div class="debt-content">
+                    <h6 class="fw-semibold mb-1">{{ debt.debtSource }}</h6>
+                    <small class="text-muted">
+                      Due: {{ formatDate(debt.renewalDate) }}<br />
+                      Amount: ₱{{ debt.amount.toLocaleString() }}
+                      <span v-if="debt.loanType === 'Sangla' && debt.loanAmount">
+                        <br />Loan Amount: ₱{{ debt.loanAmount.toLocaleString() }}
+                      </span>
+                    </small>
+                  </div>
+                </div>
+                <span class="amount-badge">₱{{ debt.amount.toLocaleString() }}</span>
+              </div>
+            </div>
+            <div v-else class="text-center py-5">
+              <i class="bi bi-check-circle text-success fs-1 mb-3"></i>
+              <p class="text-muted">No debts due soon. You're on track!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
   </div>
 </template>
 
@@ -299,12 +300,13 @@ const summaryCards = computed(() => [
 
 <style scoped>
 /* Base Styles */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
-.dashboard-container {
-  font-family: 'Inter', sans-serif;
+/* Apply Poppins to all elements within the dashboard container */
+.dashboard-container,
+.dashboard-container * {
+  font-family: 'Poppins', sans-serif !important;
   transition: all 0.3s ease;
-  background: transparent !important;
 }
 
 .dark-mode {
@@ -340,6 +342,7 @@ const summaryCards = computed(() => [
 
 /* Total Debt Header Section */
 .header-section {
+  margin-top: -2rem;
   padding: 2rem;
   background: #ffffff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -364,6 +367,7 @@ const summaryCards = computed(() => [
 
 /* Summary Cards */
 .summary-box {
+  margin-top: -1.8rem;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.75rem;
@@ -377,9 +381,7 @@ const summaryCards = computed(() => [
 .modern-card {
   background: #ffffff;
   border: none;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   padding: 0.75rem;
 }
 
@@ -580,6 +582,18 @@ const summaryCards = computed(() => [
   color: #ffffff;
   box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
 }
+
+/* Pull the Due Soon section up */
+.row.g-4.mb-5 {
+  margin-top: -3rem !important; /* closer to the section above */
+  margin-bottom: 2rem !important; /* reduce spacing below */
+}
+
+.card-header {
+  padding-top: 1rem !important; /* reduce header top padding */
+  padding-bottom: 1rem !important;
+}
+
 
 /* Animations */
 @keyframes fadeInUp {

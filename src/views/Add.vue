@@ -1,7 +1,6 @@
 <template>
   <div class="card glass-card shadow-sm mb-4">
     <div class="card-body">
-      <h2 class="h5 fw-bold mb-4">Add New Debt</h2>
       <form @submit.prevent="addDebt" class="needs-validation" novalidate>
         <!-- Debt Source -->
         <div class="mb-3">
@@ -99,7 +98,7 @@
           <label class="form-check-label" for="isPaid">Mark as Paid</label>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">Add Debt</button>
+        <button type="submit" class="btn btn-primary w-100">Save Debt</button>
       </form>
     </div>
   </div>
@@ -236,8 +235,13 @@ const addDebt = async () => {
 }
 </script>
 
-<style scoped>
+<style scoped>/* Apply Poppins globally inside this component */
+:host, * {
+  font-family: 'Poppins', sans-serif;
+}
+
 .glass-card {
+  margin-top: 1rem;      /* pushes it down */
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);

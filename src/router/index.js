@@ -40,7 +40,7 @@ const routes = [
   { path: '/export', name: 'ExportCsv', component: ExportCsv, meta: { name: 'Export CSV' } },
   { path: '/backup', name: 'BackupCloud', component: BackupCloud, meta: { name: 'Backup Cloud' } },
   {path: '/settings', name: 'Settings',component:Settings, meta: {requiresAuth: true, name: 'Settings'}},
-  { path: '/owePal', component: Owepal, meta: { requiresAuth: false, name: 'Welcome' } }
+  { path: '/owePal', component: Owepal, meta: { requiresAuth: false, name: 'OwePal | Welcome' } }
 
 ]
 
@@ -85,10 +85,14 @@ router.beforeEach(async (to, from, next) => {
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user
+
+  // If not logged in and current route requires auth → redirect to /owePal
   if (!user && router.currentRoute.value.meta.requiresAuth) {
-    router.push('/login')
+    router.push('/owePal')
   }
-  if (user && router.currentRoute.value.path === '/login') {
+
+  // If logged in and currently at /login or /owePal → redirect to home
+  if (user && (router.currentRoute.value.path === '/login' || router.currentRoute.value.path === '/owePal')) {
     router.push('/')
   }
 })

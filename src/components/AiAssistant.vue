@@ -219,7 +219,7 @@ onMounted(() => {
   content: "BETA";
   position: absolute;
   top: -12px;    /* place above the button */
-  right: -6px;   /* shift a bit to align */
+  right: -2px;   /* shift a bit to align */
   background: #ff4757; /* red badge */
   color: white;
   font-size: 0.6rem;
@@ -408,7 +408,7 @@ onMounted(() => {
 /* ✅ Mobile (same as desktop, floating above navbar) */
 @media (max-width: 480px) {
   .ai-assistant {
-    right: 15px;
+    right: 20px;
     bottom: 40px; /* stays above bottom navbar */
     width: 320px;
     max-width: 90vw; /* prevent overflow */
@@ -419,6 +419,7 @@ onMounted(() => {
     border-radius: 14px;
   }
   .toggle-btn {
+    right: 20px;
     width: 52px;
     height: 52px;
     font-size: 0.8rem;

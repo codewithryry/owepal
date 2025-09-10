@@ -239,7 +239,7 @@ const formatDate = (date) =>
 .debtlist-container {
   min-height: 100vh;
   padding-bottom: 4rem;
-  font-family: 'Poppins', sans-serif;
+   font-family: 'Poppins', sans-serif;
   transition: all 0.3s ease;
   background: transparent !important;
 }

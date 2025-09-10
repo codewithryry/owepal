@@ -12,6 +12,6 @@ const router = useRouter()
 
 const handleAuthentication = (user) => {
   console.log('User authenticated:', user)
-  router.push('/debts') // SPA redirect, not a full reload
+  router.push('/debts')
 }
 </script>

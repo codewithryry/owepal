@@ -286,7 +286,7 @@ const handleSignOut = async () => {
   try {
     await signOut(auth)
     accountMenuOpen.value = false
-    router.push('/login')
+    router.push('/owePal')
   } catch (error) {
     console.error('Error signing out:', error)
   }

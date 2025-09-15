@@ -1,33 +1,25 @@
 <template>
   <div
     v-if="user"
-    class="dashboard-container min-vh-100 py-5 px-3"
+    class="dashboard-container min-vh-100 py-5 px-3 slide-in-bottom"
     :class="darkMode ? 'dark-mode' : 'light-mode'"
   >
-    <!-- Header with Greeting and Time on Left
-    <div class="header-left-section mb-3">
-      <h3 class="fw-bold fs-4 mb-0 animate__animated animate__fadeIn">
-        {{ greetingMessage }}, {{ user.displayName || 'User' }}!
-      </h3>
-      <br></br>
-    </div> -->
-
     <!-- Total Debt Section -->
-    <div class="header-section text-center mb-5 rounded-box">
-      <h1 class="fw-bold display-4 animate__animated animate__fadeIn">
+    <div class="header-section text-center mb-5 rounded-box glass pulse-glow">
+      <h1 class="fw-bold display-4 slide-in-bottom gradient-text">
         ₱{{ totalDebt.toLocaleString() }}
       </h1>
-      <p class="text-muted fs-5">Total Debt Balance</p>
-      <div v-if="totalSanglaLoanAmount > 0" class="text-muted small mt-2">
+      <p class="text-muted fs-5 slide-in-bottom stagger-1">Total Debt Balance</p>
+      <div v-if="totalSanglaLoanAmount > 0" class="text-muted small mt-2 slide-in-bottom stagger-2">
         Total Sangla Loan Amount: ₱{{ totalSanglaLoanAmount.toLocaleString() }}
       </div>
-      <div class="header-underline"></div>
+      <div class="header-underline slide-in-bottom stagger-3"></div>
     </div>
 
     <!-- Summary Cards -->
     <div class="summary-box mb-5">
-      <div v-for="card in summaryCards" :key="card.title" class="summary-card">
-        <div class="card modern-card h-100 rounded-box shadow-sm animate__animated animate__zoomIn">
+      <div v-for="(card, index) in summaryCards" :key="card.title" class="summary-card">
+        <div class="card modern-card h-100 rounded-box shadow-sm glass float-animation" :class="`stagger-${index + 1}`">
           <div class="card-body d-flex justify-content-between align-items-center">
             <div>
               <h6 class="card-subtitle mb-2 text-muted">{{ card.title }}</h6>
@@ -36,7 +28,7 @@
                 <span v-if="card.subtitle" :class="card.changeClass">{{ card.subtitle }}</span>
               </p>
             </div>
-            <div :class="['icon-circle', card.bgClass]">
+            <div :class="['icon-circle', card.bgClass, 'pulse-glow']">
               <i :class="card.iconClass"></i>
             </div>
           </div>
@@ -47,20 +39,21 @@
     <!-- Recent Transactions Section -->
     <div class="row g-4 mb-5">
       <div class="col-12">
-        <div class="animate__animated animate__fadeInUp">
-          <div class="card-header d-flex justify-content-between align-items-center p-4 border-0">
-            <h5 class="fw-bold mb-0">Recent Transactions</h5>
-            <span class="badge bg-primary text-white">{{ recentDebts.length }}</span>
+        <div class="glass rounded-box slide-in-left">
+          <div class="card-header d-flex justify-content-between align-items-center p-4 border-0 slide-in-bottom">
+            <h5 class="fw-bold mb-0 gradient-text">Recent Transactions</h5>
+            <span class="badge gradient-badge text-white pulse-glow">{{ recentDebts.length }}</span>
           </div>
           <div class="card-body p-4 d-flex flex-column">
             <div v-if="recentDebts.length" class="audit-list">
               <div
-                v-for="debt in recentDebts"
+                v-for="(debt, index) in recentDebts"
                 :key="debt.id"
-                class="audit-item d-flex justify-content-between align-items-center mb-3"
+                class="audit-item d-flex justify-content-between align-items-center mb-3 glass slide-in-right"
+                :class="`stagger-${index + 1}`"
               >
                 <div class="debt-details d-flex align-items-center">
-                  <div class="timeline-dot"></div>
+                  <div class="timeline-dot pulse-glow"></div>
                   <div class="debt-content">
                     <h6 class="fw-semibold mb-1">{{ debt.debtSource }}</h6>
                     <small class="text-muted">
@@ -74,15 +67,15 @@
                     </small>
                   </div>
                 </div>
-                <span class="amount-badge">₱{{ debt.amount.toLocaleString() }}</span>
+                <span class="amount-badge gradient-badge">₱{{ debt.amount.toLocaleString() }}</span>
               </div>
             </div>
-            <div v-else class="text-center py-5">
+            <div v-else class="text-center py-5 slide-in-bottom">
               <i class="bi bi-file-earmark-text text-primary fs-1 mb-3"></i>
               <p class="text-muted">No recent activity.</p>
             </div>
-            <div class="button-container mt-auto">
-              <router-link to="/debts" class="btn btn-outline-primary"
+            <div class="button-container mt-auto slide-in-bottom stagger-4">
+              <router-link to="/debts" class="btn btn-primary gradient-btn"
                 >View All Transactions</router-link
               >
             </div>
@@ -94,20 +87,21 @@
         <!-- Due Soon Section -->
     <div class="row g-4 mb-5">
       <div class="col-12">
-        <div class="animate__animated animate__fadeInUp">
-          <div class="card-header d-flex justify-content-between align-items-center p-4 border-0">
-            <h5 class="fw-bold mb-0">Due Soon</h5>
-            <span class="badge bg-primary text-white">{{ dueSoonDebts.length }}</span>
+        <div class="glass rounded-box slide-in-right">
+          <div class="card-header d-flex justify-content-between align-items-center p-4 border-0 slide-in-bottom">
+            <h5 class="fw-bold mb-0 gradient-text">Due Soon</h5>
+            <span class="badge gradient-badge text-white pulse-glow">{{ dueSoonDebts.length }}</span>
           </div>
           <div class="card-body p-4 d-flex flex-column">
             <div v-if="dueSoonDebts.length" class="audit-list">
               <div
-                v-for="debt in dueSoonDebts"
+                v-for="(debt, index) in dueSoonDebts"
                 :key="debt.id"
-                class="audit-item d-flex justify-content-between align-items-center mb-3"
+                class="audit-item d-flex justify-content-between align-items-center mb-3 glass slide-in-left"
+                :class="`stagger-${index + 1}`"
               >
                 <div class="debt-details d-flex align-items-center">
-                  <div class="timeline-dot"></div>
+                  <div class="timeline-dot pulse-glow"></div>
                   <div class="debt-content">
                     <h6 class="fw-semibold mb-1">{{ debt.debtSource }}</h6>
                     <small class="text-muted">
@@ -119,10 +113,10 @@
                     </small>
                   </div>
                 </div>
-                <span class="amount-badge">₱{{ debt.amount.toLocaleString() }}</span>
+                <span class="amount-badge gradient-badge">₱{{ debt.amount.toLocaleString() }}</span>
               </div>
             </div>
-            <div v-else class="text-center py-5">
+            <div v-else class="text-center py-5 slide-in-bottom">
               <i class="bi bi-check-circle text-success fs-1 mb-3"></i>
               <p class="text-muted">No debts due soon. You're on track!</p>
             </div>
@@ -308,6 +302,24 @@ const summaryCards = computed(() => [
   transition: all 0.3s ease;
 }
 
+.dashboard-container {
+  position: relative;
+}
+
+.dashboard-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(245, 87, 108, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
 .dark-mode {
   color: #e5e7eb;
   background: transparent !important;
@@ -318,50 +330,56 @@ const summaryCards = computed(() => [
   background: transparent !important;
 }
 
+/* Gradient Text */
+.gradient-text {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient Badges */
+.gradient-badge {
+  background: var(--primary-gradient) !important;
+  border: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Gradient Buttons */
+.gradient-btn {
+  background: var(--primary-gradient) !important;
+  border: none;
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  transition: var(--transition-smooth);
+}
+
+.gradient-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+}
+
 /* Rounded Box */
 .rounded-box {
   border-radius: 1.5rem;
   overflow: hidden;
 }
 
-/* Header Left Section */
-.header-left-section {
-  text-align: left;
-  padding: 0;
-  margin-bottom: 1rem;
-}
-
-.header-left-section h3 {
-  margin-bottom: 0.25rem;
-}
-
-.header-left-section p {
-  margin-bottom: 0;
-}
-
 /* Total Debt Header Section */
 .header-section {
   margin-top: -2rem;
   padding: 2rem;
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.dark-mode .header-section {
-  background: #1f2937;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
 }
 
 .header-underline {
   width: 80px;
   height: 4px;
-  background: linear-gradient(90deg, #1d4ed8, #3b82f6);
+  background: var(--primary-gradient);
   margin: 0.75rem auto;
   border-radius: 2px;
-}
-
-.dark-mode .header-underline {
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
 }
 
 /* Summary Cards */
@@ -378,20 +396,30 @@ const summaryCards = computed(() => [
 }
 
 .modern-card {
-  background: #ffffff;
   border: none;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: var(--transition-smooth);
   padding: 0.75rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.dark-mode .modern-card {
-  background: #1f2937;
-  border: none;
+.modern-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.8s ease;
 }
 
 .modern-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px) scale(1.02);
+}
+
+.modern-card:hover::before {
+  left: 100%;
 }
 
 .modern-card .card-body {
@@ -423,24 +451,24 @@ const summaryCards = computed(() => [
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
-  transition: transform 0.3s ease;
+  transition: var(--transition-smooth);
 }
 
 .icon-circle:hover {
-  transform: scale(1.05);
+  transform: scale(1.1) rotate(5deg);
 }
 
 .bg-blue-50 {
-  background: #eff6ff;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
 }
 .bg-green-50 {
-  background: #f0fdf4;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
 }
 .bg-teal-50 {
-  background: #f0fdfa;
+  background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
 }
 .bg-purple-50 {
-  background: #faf5ff;
+  background: linear-gradient(135deg, #faf5ff, #f3e8ff);
 }
 
 /* Audit Log List Styles */
@@ -451,47 +479,30 @@ const summaryCards = computed(() => [
 }
 
 .audit-item {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
   padding: 1rem 1.25rem;
-  transition: all 0.3s ease;
+  transition: var(--transition-smooth);
   position: relative;
   display: grid;
   grid-template-columns: 4fr 1fr;
   align-items: center;
-}
-
-.dark-mode .audit-item {
-  background: #2d3748;
-  border: 1px solid #4b5563;
+  overflow: hidden;
 }
 
 .audit-item:hover {
-  background: #f1f5f9;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-  transform: translateY(-3px);
-}
-
-.dark-mode .audit-item:hover {
-  background: #374151;
+  transform: translateY(-3px) scale(1.02);
 }
 
 /* Timeline Dot for Audit Log Style */
 .timeline-dot {
   width: 12px;
   height: 12px;
-  background: #1d4ed8;
+  background: var(--primary-gradient);
   border-radius: 50%;
   margin-right: 1.5rem;
   flex-shrink: 0;
-  box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.15);
-  transition: background 0.3s ease;
-}
-
-.dark-mode .timeline-dot {
-  background: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+  transition: var(--transition-smooth);
 }
 
 /* Debt Details */
@@ -522,7 +533,6 @@ const summaryCards = computed(() => [
 
 /* Amount Badge */
 .amount-badge {
-  background: #1d4ed8;
   color: #fff;
   font-weight: 600;
   padding: 0.6rem 1.5rem;
@@ -530,19 +540,7 @@ const summaryCards = computed(() => [
   font-size: 1rem;
   white-space: nowrap;
   text-align: center;
-  transition: background 0.3s ease;
-}
-
-.dark-mode .amount-badge {
-  background: #3b82f6;
-}
-
-.amount-badge:hover {
-  background: #1e40af;
-}
-
-.dark-mode .amount-badge:hover {
-  background: #2563eb;
+  transition: var(--transition-smooth);
 }
 
 /* Button Container */
@@ -551,35 +549,6 @@ const summaryCards = computed(() => [
   justify-content: center;
   align-items: center;
   padding-top: 2rem;
-}
-
-/* Button Styling */
-.btn-outline-primary {
-  border: 2px solid #1d4ed8;
-  color: #1d4ed8;
-  padding: 0.75rem 2.5rem;
-  border-radius: 0.75rem;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  font-size: 1rem;
-  background: transparent;
-}
-
-.btn-outline-primary:hover {
-  background: #1d4ed8;
-  color: #ffffff;
-  box-shadow: 0 6px 16px rgba(29, 78, 216, 0.3);
-}
-
-.dark-mode .btn-outline-primary {
-  border-color: #3b82f6;
-  color: #3b82f6;
-}
-
-.dark-mode .btn-outline-primary:hover {
-  background: #3b82f6;
-  color: #ffffff;
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
 }
 
 /* Pull the Due Soon section up */
@@ -591,56 +560,13 @@ const summaryCards = computed(() => [
 .card-header {
   padding-top: 1rem !important; /* reduce header top padding */
   padding-bottom: 1rem !important;
-}
-
-
-/* Animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate__animated.animate__fadeInUp {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.animate__animated.animate__zoomIn {
-  animation: zoomIn 0.6s ease-out;
+  border-bottom: 1px solid var(--glass-border) !important;
 }
 
 /* Desktop Adjustments */
 @media (min-width: 992px) {
   .dashboard-container {
     padding: 2rem 3rem;
-  }
-  
-  .header-left-section {
-    margin-bottom: 1.5rem;
-  }
-  
-  .header-left-section h3 {
-    font-size: 1.5rem;
-  }
-  
-  .header-left-section p {
-    font-size: 1rem;
   }
   
   .header-section {
@@ -684,7 +610,7 @@ const summaryCards = computed(() => [
   .card-body {
     padding: 2.5rem !important;
   }
-  .btn-outline-primary {
+  .gradient-btn {
     padding: 0.85rem 3rem;
     font-size: 1.15rem;
   }
@@ -695,19 +621,6 @@ const summaryCards = computed(() => [
 
 /* Mobile Adjustments */
 @media (max-width: 768px) {
-  .header-left-section {
-    margin-bottom: 0.75rem;
-    text-align: left;
-  }
-  
-  .header-left-section h3 {
-    font-size: 1.25rem;
-  }
-  
-  .header-left-section p {
-    font-size: 0.875rem;
-  }
-  
   .header-section {
     padding: 1.5rem;
   }
@@ -763,7 +676,7 @@ const summaryCards = computed(() => [
     font-size: 0.8rem;
     padding: 0.4rem 0.8rem;
   }
-  .btn-outline-primary {
+  .gradient-btn {
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
   }

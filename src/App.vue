@@ -1,27 +1,27 @@
 <template>
   <div
     :class="[
-      'min-vh-100 font-sans d-flex flex-column',
+      'min-vh-100 font-sans d-flex flex-column app-container',
       darkMode ? 'bg-dark text-light' : 'bg-light text-dark',
     ]"
   >
     <!-- Fixed Header (Hidden on login page) -->
-    <header v-if="route.path !== '/owePal'" class="header glass">
+    <header v-if="route.path !== '/owePal'" class="header glass slide-in-bottom">
       <div class="header-content">
         <!-- Profile on the left -->
-        <div v-if="user" class="profile-avatar" @click="toggleAccountMenu">
+        <div v-if="user" class="profile-avatar float-animation" @click="toggleAccountMenu">
           <img v-if="user.photoURL" :src="user.photoURL" alt="Profile" class="user-avatar" />
           <div v-else class="avatar-placeholder">{{ userInitials }}</div>
         </div>
         <!-- Page title in the center -->
-        <div class="header-title">
+        <div class="header-title slide-in-bottom stagger-1">
           {{ currentPageTitle }}
         </div>
         <!-- Reminders icon on the right -->
         <router-link
           v-if="$route.path !== '/login'"
           to="/reminders"
-          class="reminders-icon"
+          class="reminders-icon pulse-glow"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -40,13 +40,13 @@
     </header>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content slide-in-bottom stagger-2">
       <router-view></router-view>
     </main>
 
     <!-- Bottom Navigation Bar (Hidden on login page) -->
-    <nav v-if="route.path !== '/login' && route.path !== '/owePal'" class="bottom-nav glass">
-      <router-link to="/" class="nav-item" active-class="active">
+    <nav v-if="route.path !== '/login' && route.path !== '/owePal'" class="bottom-nav glass slide-in-bottom stagger-3">
+      <router-link to="/" class="nav-item float-animation" active-class="active">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -62,7 +62,7 @@
         <span class="nav-label">Home</span>
       </router-link>
 
-      <router-link to="/debts" class="nav-item" active-class="active">
+      <router-link to="/debts" class="nav-item float-animation stagger-1" active-class="active">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -77,8 +77,8 @@
         <span class="nav-label">Debts</span>
       </router-link>
 
-      <router-link to="/add" class="nav-item add-button" active-class="active">
-        <div class="add-icon">
+      <router-link to="/add" class="nav-item add-button pulse-glow" active-class="active">
+        <div class="add-icon float-animation">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="28"
@@ -94,7 +94,7 @@
         <span class="nav-label">Add</span>
       </router-link>
 
-      <router-link to="/analytics" class="nav-item" active-class="active">
+      <router-link to="/analytics" class="nav-item float-animation stagger-2" active-class="active">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -118,7 +118,7 @@
         <span class="nav-label">Analytics</span>
       </router-link>
 
-            <router-link to="/settings" class="nav-item" active-class="active">
+            <router-link to="/settings" class="nav-item float-animation stagger-3" active-class="active">
         <svg
           viewBox="0 -0.5 21 21"
           width="24"
@@ -148,11 +148,11 @@
     </nav>
     
     <!-- Account Settings Dropdown Menu -->
-    <div v-if="accountMenuOpen" class="user-dropdown-container">
+    <div v-if="accountMenuOpen" class="user-dropdown-container slide-in-bottom">
       <div class="user-dropdown-overlay" @click="toggleAccountMenu"></div>
-      <div class="user-dropdown-content glass">
+      <div class="user-dropdown-content glass slide-in-bottom">
         <div class="user-info">
-          <div class="profile-avatar-large">
+          <div class="profile-avatar-large float-animation">
             <img
               v-if="user.photoURL"
               :src="user.photoURL"
@@ -168,7 +168,7 @@
           </div>
         </div>
         <div class="dropdown-actions">
-          <router-link to="/edit-profile" class="dropdown-item" @click="toggleAccountMenu">
+          <router-link to="/edit-profile" class="dropdown-item slide-in-left stagger-1" @click="toggleAccountMenu">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -182,7 +182,7 @@
             </svg>
             Edit Profile
           </router-link>
-          <button @click="handleSignOut" class="dropdown-item sign-out">
+          <button @click="handleSignOut" class="dropdown-item sign-out slide-in-left stagger-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -294,6 +294,26 @@ const handleSignOut = async () => {
 </script>
 
 <style scoped>
+.app-container {
+  position: relative;
+  overflow-x: hidden;
+}
+
+.app-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
 .font-sans {
   font-family: 'Poppins', sans-serif;
 }
@@ -304,13 +324,17 @@ const handleSignOut = async () => {
   left: 0;
   right: 0;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom: 1px solid #dee2e6;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
   padding: 0.5rem 1rem;
+  transition: var(--transition-smooth);
 }
-[data-bs-theme='dark'] .header {
-  background: rgba(33, 33, 33, 0.95);
-  border-bottom-color: #495057;
+
+.header:hover {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .header-content {
@@ -325,6 +349,10 @@ const handleSignOut = async () => {
   font-weight: 600;
   text-align: center;
   flex: 1;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .profile-avatar {
@@ -336,6 +364,13 @@ const handleSignOut = async () => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: var(--transition-smooth);
+  border: 2px solid var(--glass-border);
+}
+
+.profile-avatar:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
 }
 
 .user-avatar {
@@ -348,15 +383,13 @@ const handleSignOut = async () => {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.1);
+  background: var(--primary-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 0.875rem;
-}
-[data-bs-theme='dark'] .avatar-placeholder {
-  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
 }
 
 .reminders-icon {
@@ -364,24 +397,30 @@ const handleSignOut = async () => {
   padding: 0.5rem;
   color: inherit;
   text-decoration: none;
+  border-radius: 50%;
+  transition: var(--transition-smooth);
+}
+
+.reminders-icon:hover {
+  background: var(--glass-bg);
+  transform: scale(1.1);
 }
 
 .bottom-nav {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.95);
-  border-top: 1px solid #dee2e6;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--glass-border);
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 1000;
   padding: 0.5rem 0;
-}
-[data-bs-theme='dark'] .bottom-nav {
-  background-color: rgba(33, 33, 33, 0.95);
-  border-top-color: #495057;
+  transition: var(--transition-smooth);
 }
 
 .nav-item {
@@ -393,29 +432,50 @@ const handleSignOut = async () => {
   color: #6c757d;
   padding: 0.5rem;
   border-radius: 0.5rem;
-  transition: all 0.2s;
+  transition: var(--transition-smooth);
   flex: 1;
   max-width: 80px;
   cursor: pointer;
+  position: relative;
 }
-[data-bs-theme='dark'] .nav-item {
-  color: #adb5bd;
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--primary-gradient);
+  opacity: 0;
+  border-radius: 0.5rem;
+  transition: var(--transition-smooth);
+  z-index: -1;
 }
+
+.nav-item:hover::before {
+  opacity: 0.1;
+}
+
 .nav-item.active {
-  color: var(--bs-primary);
+  color: #667eea;
 }
-[data-bs-theme='dark'] .nav-item.active {
-  color: #7eb6ff;
+
+.nav-item.active::before {
+  opacity: 0.2;
 }
+
 .nav-label {
   font-size: 0.75rem;
   margin-top: 0.25rem;
+  font-weight: 500;
 }
 
 .add-button {
   position: relative;
   margin-top: -1rem;
 }
+
 .add-icon {
   display: flex;
   align-items: center;
@@ -423,9 +483,15 @@ const handleSignOut = async () => {
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
-  background-color: var(--bs-primary);
+  background: var(--primary-gradient);
   color: white;
-  box-shadow: 0 4px 10px rgba(var(--bs-primary-rgb), 0.3);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  transition: var(--transition-smooth);
+}
+
+.add-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
 }
 
 .main-content {
@@ -453,29 +519,33 @@ const handleSignOut = async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 .user-dropdown-content {
   position: relative;
   width: 100%;
-  background-color: white;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   padding: 1.5rem;
   z-index: 2001;
-  animation: slideUp 0.3s ease-out;
-}
-[data-bs-theme='dark'] .user-dropdown-content {
-  background-color: #2a2a2a;
+  animation: slideUp 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @keyframes slideUp {
   from {
-    transform: translateY(100%);
+    transform: translateY(100%) scale(0.95);
+    opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    opacity: 1;
   }
 }
 
@@ -496,6 +566,13 @@ const handleSignOut = async () => {
   overflow: hidden;
   margin-right: 1rem;
   flex-shrink: 0;
+  border: 3px solid var(--glass-border);
+  transition: var(--transition-smooth);
+}
+
+.profile-avatar-large:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(102, 126, 234, 0.5);
 }
 
 .user-avatar-large {
@@ -508,15 +585,13 @@ const handleSignOut = async () => {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.1);
+  background: var(--primary-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 1.5rem;
-}
-[data-bs-theme='dark'] .avatar-placeholder-large {
-  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
 }
 
 .user-details {
@@ -530,6 +605,10 @@ const handleSignOut = async () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .user-email {
@@ -548,10 +627,7 @@ const handleSignOut = async () => {
 
 .dropdown-actions {
   padding-top: 1rem;
-  border-top: 1px solid #dee2e6;
-}
-[data-bs-theme='dark'] .dropdown-actions {
-  border-top-color: #495057;
+  border-top: 1px solid var(--glass-border);
 }
 
 .dropdown-item {
@@ -565,35 +641,38 @@ const handleSignOut = async () => {
   background: transparent;
   color: inherit;
   text-decoration: none;
-  transition: background-color 0.2s;
+  transition: var(--transition-smooth);
   cursor: pointer;
-}
-.dropdown-item:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-[data-bs-theme='dark'] .dropdown-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-.sign-out {
-  color: #dc3545;
-}
-[data-bs-theme='dark'] .sign-out {
-  color: #e6858f;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Glass effect with less transparency */
-.glass {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  color: inherit;
+.dropdown-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-gradient);
+  opacity: 0.1;
+  transition: left 0.5s ease;
 }
-[data-bs-theme='dark'] .glass {
-  background: rgba(40, 40, 40, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #fff;
+
+.dropdown-item:hover {
+  background: var(--glass-bg);
+  transform: translateX(5px);
+}
+
+.dropdown-item:hover::before {
+  left: 100%;
+}
+
+.sign-out {
+  color: #f5576c;
+}
+
+.sign-out:hover {
+  color: #f093fb;
 }
 </style>

@@ -1,18 +1,18 @@
 <template>
-  <div v-if="user" class="debtlist-container px-6 py-8" :class="darkMode ? 'dark-mode' : 'light-mode'">
+  <div v-if="user" class="debtlist-container px-6 py-8 slide-in-bottom" :class="darkMode ? 'dark-mode' : 'light-mode'">
     <!-- Search / Filters -->
-    <div class="flex flex-col md:flex-row gap-4 mb-6 items-center">
+    <div class="flex flex-col md:flex-row gap-4 mb-6 items-center slide-in-left">
       <div class="w-full md:w-1/2">
         <div class="relative">
           <input
             v-model="searchQuery"
             type="text"
-            class="w-full glass-input pl-10 pr-4 py-2 rounded-full focus:ring-2 focus:ring-indigo-400"
+            class="w-full glass-input pl-10 pr-4 py-2 rounded-full focus:ring-2 focus:ring-indigo-400 float-animation"
             :class="darkMode ? 'text-white placeholder-gray-400' : 'text-gray-800 placeholder-gray-500'"
             placeholder="Search by name or item..."
           />
           <svg
-            class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5"
+            class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 pulse-glow"
             :class="darkMode ? 'text-gray-400' : 'text-gray-500'"
             fill="none"
             stroke="currentColor"
@@ -27,10 +27,10 @@
           </svg>
         </div>
       </div>
-      <div class="w-full md:w-1/2 flex gap-4 justify-end">
+      <div class="w-full md:w-1/2 flex gap-4 justify-end slide-in-right">
         <select
           v-model="statusFilter"
-          class="glass-input rounded-full px-4 py-2 focus:ring-2 focus:ring-indigo-400"
+          class="glass-input rounded-full px-4 py-2 focus:ring-2 focus:ring-indigo-400 float-animation stagger-1"
           :class="darkMode ? 'text-white' : 'text-gray-800'"
         >
           <option value="all">All Status</option>
@@ -39,7 +39,7 @@
         </select>
         <select
           v-model="typeFilter"
-          class="glass-input rounded-full px-4 py-2 focus:ring-2 focus:ring-indigo-400"
+          class="glass-input rounded-full px-4 py-2 focus:ring-2 focus:ring-indigo-400 float-animation stagger-2"
           :class="darkMode ? 'text-white' : 'text-gray-800'"
         >
           <option value="all">All Types</option>
@@ -52,11 +52,12 @@
     </div>
 
     <!-- Debt List -->
-    <div class="space-y-4">
+    <div class="space-y-4 slide-in-bottom stagger-1">
       <div
-        v-for="debt in filteredDebts"
+        v-for="(debt, index) in filteredDebts"
         :key="debt.id"
-        class="glass-item p-4 rounded-xl flex justify-between items-center transition-all duration-300"
+        class="glass-item p-4 rounded-xl flex justify-between items-center transition-all duration-300 slide-in-right float-animation"
+        :class="`stagger-${(index % 5) + 1}`"
         :class="{
           'border-l-4 border-yellow-400': isDueSoon(debt.renewalDate, debt.dueDate, debt.loanType),
         }"
@@ -85,7 +86,7 @@
           <div class="mt-2">
             <strong>Status:</strong>
             <span
-              class="inline-block px-2 py-1 rounded-full text-xs font-medium"
+              class="inline-block px-2 py-1 rounded-full text-xs font-medium pulse-glow"
               :class="debt.isPaid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
             >
               {{ debt.isPaid ? 'Paid' : 'Unpaid' }}
@@ -97,7 +98,7 @@
         <div class="flex gap-2">
           <button
             @click="togglePaidStatus(debt.id, debt.isPaid)"
-            class="btn glass-btn bg-green-100 text-green-700 hover:bg-green-200 rounded-full p-2"
+            class="btn glass-btn bg-green-100 text-green-700 hover:bg-green-200 rounded-full p-2 float-animation pulse-glow"
             title="Toggle Paid"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,7 +112,7 @@
           </button>
           <button
             @click="confirmDelete(debt.id, debt.debtSource)"
-            class="btn glass-btn bg-red-100 text-red-700 hover:bg-red-200 rounded-full p-2"
+            class="btn glass-btn bg-red-100 text-red-700 hover:bg-red-200 rounded-full p-2 float-animation pulse-glow stagger-1"
             title="Delete"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,7 +126,7 @@
           </button>
         </div>
       </div>
-      <div v-if="!filteredDebts.length" class="glass-item p-4 rounded-xl text-center" :class="darkMode ? 'text-white' : 'text-gray-500'">
+      <div v-if="!filteredDebts.length" class="glass-item p-4 rounded-xl text-center slide-in-bottom" :class="darkMode ? 'text-white' : 'text-gray-500'">
         No debts recorded yet.
       </div>
     </div>
@@ -240,8 +241,23 @@ const formatDate = (date) =>
   min-height: 100vh;
   padding-bottom: 4rem;
    font-family: 'Poppins', sans-serif;
-  transition: all 0.3s ease;
+  transition: var(--transition-smooth);
   background: transparent !important;
+  position: relative;
+}
+
+.debtlist-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(245, 87, 108, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .light-mode {
@@ -257,101 +273,142 @@ const formatDate = (date) =>
 /* Glassmorphism Styles */
 .glass-input,
 .glass-item {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-strength));
+  -webkit-backdrop-filter: blur(var(--blur-strength));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
 }
 
-.dark-mode .glass-input,
-.dark-mode .glass-item {
-  background: rgba(31, 41, 55, 0.5); /* Matches dashboard dark mode background */
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.glass-input::before,
+.glass-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.8s ease;
 }
 
 .glass-input:focus {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.15);
   outline: none;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+  border-color: rgba(102, 126, 234, 0.5);
+  transform: scale(1.02);
 }
 
-.dark-mode .glass-input:focus {
-  background: rgba(55, 65, 81, 0.7); /* Slightly lighter for focus in dark mode */
+.glass-input:focus::before {
+  left: 100%;
 }
 
 .glass-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
-.dark-mode .glass-item:hover {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+.glass-item:hover::before {
+  left: 100%;
 }
 
 /* Button Styles */
 .glass-btn {
-  transition: all 0.3s ease;
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
 }
 
 .glass-btn:hover {
-  transform: scale(1.05);
+  transform: scale(1.1) rotate(5deg);
+}
+
+.glass-btn:hover::before {
+  left: 100%;
 }
 
 .light-mode .glass-btn.bg-green-100 {
-  background: #f0fdf4;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
   color: #15803d;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.2);
 }
 
 .dark-mode .glass-btn.bg-green-100 {
-  background: rgba(34, 197, 94, 0.3); /* Slightly more opaque for visibility */
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.2));
   color: #4ade80;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
 }
 
 .light-mode .glass-btn.bg-red-100 {
-  background: #fef2f2;
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
   color: #b91c1c;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
 }
 
 .dark-mode .glass-btn.bg-red-100 {
-  background: rgba(239, 68, 68, 0.3); /* Slightly more opaque for visibility */
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.2));
   color: #f87171;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
 }
 
 .light-mode .glass-btn:hover.bg-green-200 {
-  background: #dcfce7;
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
 }
 
 .dark-mode .glass-btn:hover.bg-green-200 {
-  background: rgba(34, 197, 94, 0.5);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.5), rgba(34, 197, 94, 0.4));
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.5);
 }
 
 .light-mode .glass-btn:hover.bg-red-200 {
-  background: #fee2e2;
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
 }
 
 .dark-mode .glass-btn:hover.bg-red-200 {
-  background: rgba(239, 68, 68, 0.5);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.5), rgba(239, 68, 68, 0.4));
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
 }
 
 /* Status Badge Styles */
 .light-mode .bg-green-100 {
-  background: #f0fdf4;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
   color: #15803d;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
 }
 
 .dark-mode .bg-green-100 {
-  background: rgba(34, 197, 94, 0.3); /* Slightly more opaque for visibility */
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.2));
   color: #ffffff; /* White text for status badge in dark mode */
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
 }
 
 .light-mode .bg-red-100 {
-  background: #fef2f2;
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
   color: #b91c1c;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
 }
 
 .dark-mode .bg-red-100 {
-  background: rgba(239, 68, 68, 0.3); /* Slightly more opaque for visibility */
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.2));
   color: #ffffff; /* White text for status badge in dark mode */
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
 
 /* Responsive Adjustments */
